@@ -1,0 +1,71 @@
+# File format is YAML-based.
+#
+# Coordinates increase as they go down and to the right, point 0,0 is
+# the first character on the line after the opening :level:
+# 
+# The "+", "-", and "|" represent walls, which the player cannot walk
+# through
+level: |
+    +---------------+------------------+
+    |               |                  |
+    |               |   S     A    S   |
+    |               |                  |
+    |               |      S           |
+    |               |                  |
+    |               |           S      |
+    |        @      |   S              |
+    |                T                 |
+    |                T              S  |
+    |                T                 |
+    +----------------------------------+
+
+# Rooms represent groups of rectangles, associated with a name
+rooms:
+    bossroom:
+        - [19, 0, 36, 17]  # [x1, y1, x2, y2]
+
+# Associations:
+# Because actors are represented on the map by a single character, you
+# can define more information about them here.
+# For instance, you can associate a name (such as "Boss")
+# with them, or change their visiblity to the player
+# 
+# In addition, you can specify a "group" attribute. Groups can be called
+# as a whole, so for instance you can tell all "Spawners" to spawn a
+# monster at their location with "Spawners spawn Goomba"
+#
+# NOTE: The "@", "+", "|", and "-" symbols have special significance and
+# cannot be defined here.
+associations:
+    A:
+        name: Boss
+        group: Bosses
+        visible: True
+        attributes:
+            health: 1000
+            strength: 50
+            defense: 80
+            speed: 2
+    S:
+        name: Spawner
+        group: Spawners
+        visible: False
+
+
+# The triggers section represents triggers which activate when the
+# player steps on them, and are associated with a character on the map
+# 
+# NOTE: Trigger characters will be displayed as whitespace to the
+# player, and when a trigger is activated, all other triggers of the
+# same symbol will be removed from the map
+triggers:
+    T:
+        - action: script
+          script:
+            - Boss: I AM AWESOME
+            - Player: No you're not!
+            - Boss: Then die!
+        - action: spawn
+          actor: group(Spawners)
+          target: group(Enemies)
+
