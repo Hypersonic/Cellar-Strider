@@ -1,7 +1,7 @@
 # File format is YAML-based.
 #
 # Coordinates increase as they go down and to the right, point 0,0 is
-# the first character on the line after the opening :level:
+# the first character on the line after the level:
 # 
 # The "+", "-", and "|" represent walls, which the player cannot walk
 # through
