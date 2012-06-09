@@ -9,11 +9,21 @@ class Display(object):
     def __init__(self):
         self._max_fps = 10
         self._window = None
+
         self._last_update_time = time.time()
+
+
+    @property
+    def max_fps(self):
+        return self._max_fps
 
     @property
     def window(self):
         return self._window
+
+    @max_fps.setter
+    def max_fps(self, value):
+        self._max_fps = value
 
     def setup(self):
         self._window = curses.initscr()  # Initialize curses
@@ -38,9 +48,10 @@ class Display(object):
     def shutdown(self):
         if not self.window:
             return
+
         self.window.keypad(0)  # Don't break escape sequences
-        curses.nocbreak()  # Re-enable stdin line buffering
-        curses.echo()  # Re-enable echoing stdin
+        curses.nocbreak()  # Restore stdin line buffering
+        curses.echo()  # Restore echoing stdin
         curses.endwin()  # Shut down curses
 
     def render(self, map):
