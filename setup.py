@@ -18,7 +18,7 @@ setup(
     author = "Ben Kurtovic and Josh Hofing",
     author_email = "ben.kurtovic@verizon.net and joshhofing@gmail.com",
     url = "https://github.com/Hypersonic/Cellar-Strider",
-    description = "EarwigBot is a Python robot that edits Wikipedia and interacts with people over IRC.",
+    description = "Cellar-Strider is a game where you stride around cellars or something.",
     long_description = long_docs,
     download_url = "https://github.com/Hypersonic/Cellar-Strider/tarball/v{0}".format(__version__),
     keywords = "cellar strider roguelike text-based game hypersonic earwig",
