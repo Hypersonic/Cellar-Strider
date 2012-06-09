@@ -30,7 +30,9 @@ class MainMenu(object):
 
     def run(self):
         self._load_games()
-        print self._games
-        index = int(raw_input("Select a level: "))
+        print "Loaded games:"
+        for i, game in enumerate(self._games):
+            print "\t{0}: {1}".format(i, game.name)
+        index = int(raw_input("Select a game ID: "))
         self._display.setup()
         self._games[index].play()
