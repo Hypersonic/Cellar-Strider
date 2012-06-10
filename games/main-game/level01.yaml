@@ -1,0 +1,35 @@
+# level 1 of main game
+
+map: |
+    +-----------------------------------+
+    |    H                              |
+    |   @H                   p          |
+    |   H                               |
+    +------------------------+       +--+
+    |                                   |
+    |                                   |
+    |                                   |
+    +-----------------------------------+
+
+objects:
+    p:
+        name: Mysterious_Present
+        group: Presents
+        visible: True
+
+
+
+
+triggers:
+    H:
+        - action: script
+          script:
+            - Strange_Voice: Welcome!
+            - Strange_Voice: There have been 2 new monster attack(s) in the past 24 hour(s)
+            - Strange_Voice: Anyways, you're safe at home, so that means something, right?
+            - Strange_Voice: It'd be /really/ nice if someone did something about those monsters...
+            - Strange_Voice: And someone left you a present!
+            - Strange_Voice: Maybe it's a kitten?
+            - Strange_Voice: If you have further questions, do not hesitate to contact HARVON VILLAGE SUPPORT CENTER.
+            - You: That was strange...
+            - You: Well, better check out that present before heading out.
