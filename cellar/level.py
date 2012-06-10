@@ -24,21 +24,27 @@ class Level(object):
     def __repr__(self):
         return "Level({0!r})".format(self.levelfile)
 
-    def _parse_object(self, char):
-        if char == "@":
-            return self.game.player
-        elif char in ["+", "-", "|"]:
-            return Wall(self.game, char)
-
     def _parse_map(self, mapstr):
         mapdata = []
         rows = mapstr.splitlines()
-        for row in rows:
+        for row, cells in enumerate(rows):
             rowdata = []
-            for cell in row:
-                rowdata.append(self._parse_object(cell))
+            for col, cell in enumerate(cells):
+                obj = self._parse_object(cell, row, col)
+                if obj:
+                    rowdata.append([obj])
+                else:
+                    rowdata.append([])
             mapdata.append(rowdata)
         return mapdata
+
+    def _parse_object(self, char, row, col):
+        if char == "@":
+            player = self.game.player
+            player.x, player.y = col, row
+            return player
+        elif char in ["+", "-", "|"]:
+            return Wall(self.game, col, row, char)
 
     def _load(self):
         with open(self.levelfile) as fp:
@@ -73,15 +79,11 @@ class Level(object):
     def triggers(self):
         return self._triggers
 
-    def remove(self, target):
-        for row in self.map:
-            for i, obj in enumerate(row):
-                if obj is target:
-                    row[i] = None
-                    return
-
     def step(self, events):
+        stepped = []
         for row in self.map:
-            for obj in row:
-                if obj:
-                    obj.step(events)
+            for cell in row:
+                for obj in cell:
+                    if obj not in stepped:
+                        obj.step(events)
+                        stepped.append(obj)

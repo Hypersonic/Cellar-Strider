@@ -13,13 +13,29 @@ class Display(object):
     def __init__(self):
         self._max_fps = 10
         self._window = None
-
         self._last_update_time = time.time()
 
-    def _display_header(self):
+    def _render_header(self, offset=0):
         template = "    Cellar Strider v{0} by {1}    "
         header = template.format(__version__, __author__)
         self.window.addstr(header, curses.A_REVERSE)
+        return offset + 2
+
+    def _render_map(self, map, offset=0):
+        for row, cells in enumerate(map):
+            for col, cell in enumerate(cells):
+                for obj in cell:
+                    self._render_object(obj, row + offset, col)
+        return offset + len(map) + 1
+
+    def _render_object(self, obj, row, col):
+        if not obj.is_visible:
+            return
+        char = obj.render()
+        if isinstance(char, tuple):
+            self.window.addch(row, col, char[0], char[1])
+        else:
+            self.window.addch(row, col, char)
 
     @property
     def max_fps(self):
@@ -65,16 +81,8 @@ class Display(object):
 
     def render(self, map):
         self.window.erase()
-        self._display_header()
-        for row, objects in enumerate(map):
-            for col, obj in enumerate(objects):
-                if not obj or not obj.is_visible:
-                    continue
-                char = obj.render()
-                if isinstance(char, tuple):
-                    self.window.addch(row + 2, col, char[0], char[1])
-                else:
-                    self.window.addch(row + 2, col, char)
+        offset = self._render_header()
+        self._render_map(map, offset)
         self.window.refresh()
 
     def tick(self):

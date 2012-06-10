@@ -38,6 +38,15 @@ class Game(object):
         self._entry_level = raw["entryLevel"]
         self._player = Player(self, raw.get("playerHealth", 100))
 
+    def _get_events(self):
+        events = []
+        key = self.display.window.getch()
+        while key > -1:
+            if key not in events:
+                events.append(key)
+            key = self.display.window.getch()
+        return events
+
     def _step_schedule(self):
         now = time()
         for i, (when, action) in enumerate(self._schedule):
@@ -46,8 +55,9 @@ class Game(object):
                 action()
 
     def _step(self):
+        events = self._get_events()
         self._step_schedule()
-        self.level.step(events=[])
+        self.level.step(events)
         self.display.render(self.level.map)
         self.display.tick()
 
