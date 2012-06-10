@@ -3,11 +3,11 @@
 __all__ = ["Object"]
 
 class Object(object):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, visible=True):
         self._game = game
         self._x = x
         self._y = y
-        self._visible = True
+        self._visible = visible
 
     @property
     def game(self):
@@ -34,10 +34,17 @@ class Object(object):
         return self._visible
 
     def move(self, dx, dy, noclip=False):
-        self.game.level.map[self.y][self.x].remove(self)
+        destination = self.game.level.map[self.y + dy][self.x + dx]
+        if not noclip:
+            collisions = [obj.is_visible for obj in destination]
+            if any(collisions):
+                return
+
+        current = self.game.level.map[self.y][self.x]
+        current.remove(self)
+        destination.append(self)
         self.x += dx
         self.y += dy
-        self.game.level.map[self.y][self.x].append(self)
 
     def die(self):
         self.game.level.map[self.y][self.x].remove(self)

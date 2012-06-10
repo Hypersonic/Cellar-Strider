@@ -11,7 +11,7 @@ class Display(object):
     BOLD = curses.A_BOLD
 
     def __init__(self):
-        self._max_fps = 10
+        self._max_fps = 15
         self._window = None
         self._last_update_time = time.time()
 
