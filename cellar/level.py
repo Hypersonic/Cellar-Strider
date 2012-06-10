@@ -28,7 +28,7 @@ class Level(object):
         if char == "@":
             return self.game.player
         elif char in ["+", "-", "|"]:
-            return Wall(char)
+            return Wall(self.game, char)
 
     def _parse_map(self, mapstr):
         mapdata = []
@@ -73,8 +73,15 @@ class Level(object):
     def triggers(self):
         return self._triggers
 
-    def step(self):
+    def remove(self, target):
+        for row in self.map:
+            for i, obj in enumerate(row):
+                if obj is target:
+                    row[i] = None
+                    return
+
+    def step(self, events):
         for row in self.map:
             for obj in row:
                 if obj:
-                    obj.step()
+                    obj.step(events)

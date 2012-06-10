@@ -68,9 +68,7 @@ class Display(object):
         self._display_header()
         for row, objects in enumerate(map):
             for col, obj in enumerate(objects):
-                if not obj:
-                    continue
-                if not obj.is_visible:
+                if not obj or not obj.is_visible:
                     continue
                 char = obj.render()
                 if isinstance(char, tuple):

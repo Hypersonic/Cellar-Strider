@@ -3,15 +3,23 @@
 __all__ = ["Object"]
 
 class Object(object):
-    def __init__(self):
+    def __init__(self, game):
+        self._game = game
         self._visible = True
+
+    @property
+    def game(self):
+        return self._game
 
     @property
     def is_visible(self):
         return self._visible
 
-    def render(self):
-        raise NotImplementedError()
+    def die(self):
+        self.game.level.remove(self)
 
-    def step(self):
-        raise NotImplementedError()
+    def render(self):
+        pass
+
+    def step(self, events):
+        pass

@@ -1,6 +1,7 @@
 # -*- coding: utf-8  -*-
 
 from os import path
+from time import time
 
 try:
     import yaml
@@ -22,6 +23,7 @@ class Game(object):
         self._entry_level = None
         self._level = None
         self._player = None
+        self._schedule = []
 
         self._load()
 
@@ -36,6 +38,19 @@ class Game(object):
         self._entry_level = raw["entryLevel"]
         self._player = Player(self, raw.get("playerHealth", 100))
 
+    def _step_schedule(self):
+        now = time()
+        for i, (when, action) in enumerate(self._schedule):
+            if now >= when:
+                self._schedule.pop(i)
+                action()
+
+    def _step(self):
+        self._step_schedule()
+        self.level.step(events=[])
+        self.display.render(self.level.map)
+        self.display.tick()
+
     @property
     def display(self):
         return self._display
@@ -43,10 +58,6 @@ class Game(object):
     @property
     def gamedir(self):
         return self._gamedir
-
-    @property
-    def playing(self):
-        return self._playing
 
     @property
     def name(self):
@@ -60,15 +71,15 @@ class Game(object):
     def player(self):
         return self._player
 
-    @playing.setter
-    def playing(self, value):
-        self._playing = value
+    def end(self):
+        self._playing = False
+
+    def schedule(self, when, action):
+        self._schedule.append((time() + when, action))
 
     def play(self):
         levelfile = path.join(self.gamedir, self._entry_level + ".yaml")
         self._level = Level(self, levelfile)
-        self.playing = True
-        while self.playing:
-            self.level.step()
-            self.display.render(self.level.map)
-            self.display.tick()
+        self._playing = True
+        while self._playing:
+            self._step()

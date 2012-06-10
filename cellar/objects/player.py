@@ -6,25 +6,18 @@ __all__ = ["Player"]
 
 class Player(Object):
     def __init__(self, game, health):
-        super(Player, self).__init__()
-        self._game = game
+        super(Player, self).__init__(game)
         self._health = health
-
-    @property
-    def game(self):
-        return self._game
 
     @property
     def health(self):
         return self._health
 
-    @property
-    def alive(self):
-        return self.health > 0
-
     def render(self):
         return "@", self.game.display.CYAN | self.game.display.BOLD
 
-    def step(self):
+    def step(self, events):
         # Do some user input stuff LOL
-        pass
+        if self.health <= 0:
+            self.game.schedule(2, self.game.end)
+            self.die()
