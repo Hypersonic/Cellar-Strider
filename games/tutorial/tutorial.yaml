@@ -21,7 +21,7 @@ map: |
 # then walks into the next room
 
 
-associations:
+objects:
     M:
        name: Old_Man
        group: Old_Dumb_Men
@@ -79,3 +79,4 @@ triggers:
           script:
             - Old_Man: Good job, whipersnapper!
             - Old_Man: Now go on an adventure, you're all ready!
+        - action: end_game
