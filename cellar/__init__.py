@@ -6,8 +6,10 @@ __license__ = "MIT License"
 __version__ = "0.1.dev"
 __email__ = "ben.kurtovic@verizon.net and joshhofing@gmail.com"
 
+from cellar import actions
+from cellar import objects
+
 from cellar.display import Display
 from cellar.game import Game
 from cellar.level import Level
 from cellar.main import MainMenu
-from cellar.player import Player

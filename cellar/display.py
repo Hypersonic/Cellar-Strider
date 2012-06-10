@@ -3,15 +3,23 @@
 import curses
 import time
 
+from cellar import __author__, __version__
+
 __all__ = ["Display"]
 
 class Display(object):
+    BOLD = curses.A_BOLD
+
     def __init__(self):
         self._max_fps = 10
         self._window = None
 
         self._last_update_time = time.time()
 
+    def _display_header(self):
+        template = "    Cellar Strider v{0} by {1}    "
+        header = template.format(__version__, __author__)
+        self.window.addstr(header, curses.A_REVERSE)
 
     @property
     def max_fps(self):
@@ -34,21 +42,22 @@ class Display(object):
         self.window.nodelay(1)  # Do not block getting characters from stdin
 
         # Set up colors:
-        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_BLACK)
-        curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
-        curses.init_pair(3, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-        curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)
-        curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLUE)
-        curses.init_pair(6, curses.COLOR_RED, curses.COLOR_WHITE)
-        curses.init_pair(7, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
-        curses.init_pair(8, curses.COLOR_RED, curses.COLOR_BLACK)
-        curses.init_pair(9, curses.COLOR_BLACK, curses.COLOR_RED)
-        curses.init_pair(10, curses.COLOR_WHITE, curses.COLOR_RED)
+        def def_color(num, color):
+            name = "COLOR_" + color
+            curses.init_pair(num, getattr(curses, name), curses.COLOR_BLACK)
+            setattr(self, color, curses.color_pair(num))
+
+        def_color(1, "BLACK")
+        def_color(2, "BLUE")
+        def_color(3, "CYAN")
+        def_color(4, "GREEN")
+        def_color(5, "MAGENTA")
+        def_color(6, "RED")
+        def_color(7, "YELLOW")
 
     def shutdown(self):
         if not self.window:
             return
-
         self.window.keypad(0)  # Don't break escape sequences
         curses.nocbreak()  # Restore stdin line buffering
         curses.echo()  # Restore echoing stdin
@@ -56,9 +65,18 @@ class Display(object):
 
     def render(self, map):
         self.window.erase()
-        for row, chars in enumerate(map):
-            for col, char in enumerate(chars):
-                self.window.addch(row, col, char)
+        self._display_header()
+        for row, objects in enumerate(map):
+            for col, obj in enumerate(objects):
+                if not obj:
+                    continue
+                if not obj.is_visible:
+                    continue
+                char = obj.render()
+                if isinstance(char, tuple):
+                    self.window.addch(row + 2, col, char[0], char[1])
+                else:
+                    self.window.addch(row + 2, col, char)
         self.window.refresh()
 
     def tick(self):
