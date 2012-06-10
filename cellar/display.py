@@ -9,16 +9,18 @@ __all__ = ["Display"]
 
 class Display(object):
     BOLD = curses.A_BOLD
+    REVERSE = curses.A_REVERSE
 
     def __init__(self):
         self._max_fps = 15
         self._window = None
+        self._color_table = {}
         self._last_update_time = time.time()
 
     def _render_header(self, offset=0):
         template = "    Cellar Strider v{0} by {1}    "
         header = template.format(__version__, __author__)
-        self.window.addstr(header, curses.A_REVERSE)
+        self.window.addstr(header, self.REVERSE)
         return offset + 2
 
     def _render_map(self, map, offset=0):
@@ -58,11 +60,16 @@ class Display(object):
         self.window.nodelay(1)  # Do not block getting characters from stdin
 
         # Set up colors:
-        def def_color(num, color):
+        def def_color(num, color, no_init=False):
             name = "COLOR_" + color
-            curses.init_pair(num, getattr(curses, name), curses.COLOR_BLACK)
-            setattr(self, color, curses.color_pair(num))
+            if not no_init:
+                color_code = getattr(curses, name)
+                curses.init_pair(num, color_code, curses.COLOR_BLACK)
+            pair = curses.color_pair(num)
+            setattr(self, color, pair)
+            self._color_table[color.lower()] = pair
 
+        def_color(0, "WHITE", no_init=True)
         def_color(1, "BLACK")
         def_color(2, "BLUE")
         def_color(3, "CYAN")
@@ -78,6 +85,9 @@ class Display(object):
         curses.nocbreak()  # Restore stdin line buffering
         curses.echo()  # Restore echoing stdin
         curses.endwin()  # Shut down curses
+
+    def convert_color(self, name):
+        return self._color_table[name]
 
     def render(self, map):
         self.window.erase()

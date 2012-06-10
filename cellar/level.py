@@ -1,10 +1,14 @@
 # -*- coding: utf-8  -*-
 
+from collections import defaultdict
+
 try:
     import yaml
 except NameError:
     yaml = None
 
+from cellar.objects.actor import Actor
+from cellar.objects.trigger import Trigger
 from cellar.objects.wall import Wall
 
 __all__ = ["Level"]
@@ -16,8 +20,10 @@ class Level(object):
 
         self._map = []
         self._rooms = {}
-        self._associations = {}
-        self._triggers = {}
+        self._object_data = {}
+        self._trigger_data = {}
+        self._objects = defaultdict(list)
+        self._triggers = defaultdict(list)
 
         self._load()
 
@@ -43,16 +49,35 @@ class Level(object):
             player = self.game.player
             player.x, player.y = col, row
             return player
+
         elif char in ["+", "-", "|"]:
             return Wall(self.game, col, row, char)
+
+        elif char in self._object_data:
+            info = self._object_data[char]
+            name = info["name"].upper()
+            group = info["group"].upper()
+            visible = info.get("visible", True)
+            color = self.game.display.convert_color(info.get("color", "white"))
+            attributes = info.get("attributes", {})
+            obj = Actor(self.game, col, row, char, name, group, visible, color,
+                        attributes)
+            self._objects[group].append(obj)
+            return obj
+
+        elif char in self._trigger_data:
+            actions = self._trigger_data[char]
+            trigger = Trigger(self.game, col, row, char, actions)
+            self._triggers[char].append(trigger)
+            return trigger
 
     def _load(self):
         with open(self.levelfile) as fp:
             raw = yaml.load(fp)
 
         self._rooms = raw.get("rooms", {})
-        self._associations = raw.get("associations", {})
-        self._triggers = raw.get("triggers", {})
+        self._object_data = raw.get("objects", {})
+        self._trigger_data = raw.get("triggers", {})
         self._map = self._parse_map(raw.get("map", ""))
 
     @property
@@ -68,12 +93,8 @@ class Level(object):
         return self._map
 
     @property
-    def rooms(self):
-        return self._rooms
-
-    @property
-    def associations(self):
-        return self._associations
+    def objects(self):
+        return self._objects
 
     @property
     def triggers(self):

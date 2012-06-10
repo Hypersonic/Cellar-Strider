@@ -9,6 +9,9 @@ class Player(Object):
         super(Player, self).__init__(game, 0, 0)
         self._health = health
 
+    def _use_item(self):
+        pass
+
     @property
     def health(self):
         return self._health
@@ -26,6 +29,8 @@ class Player(Object):
                 self.move(0, 1)
             elif key == ord("d"):
                 self.move(1, 0)
+            elif key == ord(" "):
+                self._use_item()
         if self.health <= 0:
             self.game.schedule(2, self.game.end)
             self.die()

@@ -23,9 +23,10 @@ map: |
 
 objects:
     M:
-       name: Old_Man
-       group: Old_Dumb_Men
+       name: Old Man
+       group: NPCs
        visible: True
+       color: green
        attributes:
             health: -1 # infinite health
             defense: -1 # Unhurtable
@@ -35,13 +36,14 @@ objects:
         group: Spawners
         visible: False
     F:
-        name: Waypoint_oldman_1
+        name: Old Man Waypoint
         group: Waypoints
         visible: False
     D:
-        name: Training_Enemy
-        group: Training_Enemies
+        name: Training enemy
+        group: Training enemies
         visible: True
+        color: red
         attributes:
             health: 10
             defense: 1
@@ -53,30 +55,30 @@ triggers:
     W:
         - action: script
           script:
-            - Old_Man: Woah there, youngun!
-            - Old_Man: I can't let you go out there without some training, can I?
-            - Old_Man: Here, take this! It ain't much more than a stick, but it'll do the basics.
+            - Old Man: Woah there, youngun!
+            - Old Man: I can't let you go out there without some training, can I?
+            - Old Man: Here, take this! It ain't much more than a stick, but it'll do the basics.
         - action: give
-          item: training_sword
+          item: Training sword
           target: Player
         - action: script
           script:
-            - Old_Man: Don't just stand there staring at it! Open up the equip menu with "i", and put it on! 
+            - Old Man: Don't just stand there staring at it! Open up the equip menu with "i", and put it on! 
         - action: walk
-          actor: Old_Man
-          target: F
+          actor: Old Man
+          target: Old Man Waypoint
     T:
         - action: script
           script:
-            - Old_Man: Here come some enemies!
-            - Old_Man: Don't worry, they're just practice dummies.
-            - Old_Man: Do you really think I'd send you into combat with only a training sword?
+            - Old Man: Here come some enemies!
+            - Old Man: Don't worry, they're just practice dummies.
+            - Old Man: Do you really think I'd send you into combat with only a training sword?
         - action: spawn
           actor: group(Spawners)
-          target: group(Training_Enemies)
+          target: group(Training enemies)
     G:
         - action: script
           script:
-            - Old_Man: Good job, whipersnapper!
-            - Old_Man: Now go on an adventure, you're all ready!
+            - Old Man: Good job, whipersnapper!
+            - Old Man: Now go on an adventure, you're all ready!
         - action: end_game
