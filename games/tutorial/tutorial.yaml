@@ -20,7 +20,6 @@ map: |
 # W triggers the old man, who gives the player a training sword and
 # then walks into the next room
 
-
 objects:
     M:
        name: Old Man
@@ -28,8 +27,8 @@ objects:
        visible: True
        color: green
        attributes:
-            health: -1 # infinite health
-            defense: -1 # Unhurtable
+            health: -1  # Infinite health
+            defense: -1  # Unhurtable
             speed: 1
     S:
         name: Spawner
@@ -49,7 +48,6 @@ objects:
             defense: 1
             speed: 0
             attack: 0
-
 
 triggers:
     W:

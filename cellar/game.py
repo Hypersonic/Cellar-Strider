@@ -53,10 +53,10 @@ class Game(object):
 
     def _step_schedule(self):
         now = time()
-        for i, (when, action) in enumerate(self._schedule):
+        for i, (when, action, args, kwargs) in enumerate(self._schedule):
             if now >= when:
                 self._schedule.pop(i)
-                action()
+                action(*args, **kwargs)
 
     def _step(self):
         events = self._get_events()
@@ -89,8 +89,12 @@ class Game(object):
     def end(self):
         self._playing = False
 
-    def schedule(self, when, action):
-        self._schedule.append((time() + when, action))
+    def schedule(self, when, action, args=None, kwargs=None):
+        if not args:
+            args = ()
+        if not kwargs:
+            kwargs = {}
+        self._schedule.append((time() + when, action, args, kwargs))
 
     def play(self):
         levelfile = path.join(self.gamedir, self._entry_level + ".yaml")
