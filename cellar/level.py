@@ -23,6 +23,7 @@ class Level(object):
         self._object_data = {}
         self._trigger_data = {}
         self._objects = defaultdict(list)
+        self._object_groups = defaultdict(list)
         self._triggers = defaultdict(list)
 
         self._load()
@@ -44,27 +45,28 @@ class Level(object):
             mapdata.append(rowdata)
         return mapdata
 
+    def _create_actor(self, char, row, col):
+        info = self._object_data[char]
+        name = info["name"].upper()
+        group = info["group"].upper()
+        visible = info.get("visible", True)
+        color = self.game.display.convert_color(info.get("color", "white"))
+        attributes = info.get("attributes", {})
+        obj = Actor(self.game, col, row, char, name, group, visible, color,
+                    attributes)
+        self._objects[name].append(obj)
+        self._object_groups[group].append(obj)
+        return obj
+
     def _parse_object(self, char, row, col):
         if char == "@":
             player = self.game.player
             player.x, player.y = col, row
             return player
-
         elif char in ["+", "-", "|"]:
             return Wall(self.game, col, row, char)
-
         elif char in self._object_data:
-            info = self._object_data[char]
-            name = info["name"].upper()
-            group = info["group"].upper()
-            visible = info.get("visible", True)
-            color = self.game.display.convert_color(info.get("color", "white"))
-            attributes = info.get("attributes", {})
-            obj = Actor(self.game, col, row, char, name, group, visible, color,
-                        attributes)
-            self._objects[group].append(obj)
-            return obj
-
+            return self._create_actor(char, row, col)
         elif char in self._trigger_data:
             actions = self._trigger_data[char]
             trigger = Trigger(self.game, col, row, char, actions)
@@ -95,6 +97,10 @@ class Level(object):
     @property
     def objects(self):
         return self._objects
+
+    @property
+    def object_groups(self):
+        return self._object_groups
 
     @property
     def triggers(self):

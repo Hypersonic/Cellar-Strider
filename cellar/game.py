@@ -47,6 +47,10 @@ class Game(object):
             key = self.display.window.getch()
         return events
 
+    def _handle_global_events(self, events):
+        if ord("q") in events:
+            self.end()
+
     def _step_schedule(self):
         now = time()
         for i, (when, action) in enumerate(self._schedule):
@@ -56,6 +60,7 @@ class Game(object):
 
     def _step(self):
         events = self._get_events()
+        self._handle_global_events(events)
         self._step_schedule()
         self.level.step(events)
         self.display.render(self.level.map)
