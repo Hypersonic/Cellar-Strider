@@ -2,14 +2,14 @@
 
 map: |
     +-----------------------------------+
-    |    H                              |
-    |   @H                   p          |
-    |   H                               |
-    +------------------------+       +--+
+    |    H                  A           |
+    |   @H                  Ap          |
+    |   H                   A           |
+    +------------------------+GGGGGGG+--+
     |                                   |
     |                                   |
     |                                   |
-    +-----------------------------------+
+    |                                   |
 
 objects:
     p:
@@ -33,3 +33,16 @@ triggers:
             - Strange_Voice: If you have further questions, do not hesitate to contact HARVON VILLAGE SUPPORT CENTER.
             - You: That was strange...
             - You: Well, better check out that present before heading out.
+    A:
+        - action: give
+          item: Wooden_Sword
+          target: Player
+        - action: remove
+          target: Mysterious_Present
+        - action: script
+          script:
+            - Player: Woah, a wooden sword!
+            - Player: Just what I've always wanted!
+    G:
+        - action: load_map
+          target: level02
