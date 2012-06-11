@@ -4,7 +4,7 @@ from collections import defaultdict
 
 try:
     import yaml
-except NameError:
+except ImportError:
     yaml = None
 
 from cellar.objects.actor import Actor

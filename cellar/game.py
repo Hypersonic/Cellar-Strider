@@ -5,7 +5,7 @@ from time import time
 
 try:
     import yaml
-except NameError:
+except ImportError:
     yaml = None
 
 from cellar.level import Level
