@@ -63,7 +63,7 @@ class Level(object):
             player = self.game.player
             player.x, player.y = col, row
             return player
-        elif char in ["+", "-", "|"]:
+        elif char in ["+", "-", "|", "\\", "/"]:
             return Wall(self.game, col, row, char)
         elif char in self._object_data:
             return self._create_actor(char, row, col)
