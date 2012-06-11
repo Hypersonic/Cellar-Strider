@@ -81,4 +81,4 @@ triggers:
           script:
             - Old Man: Good job, whipersnapper!
             - Old Man: Now go on an adventure, you're all ready!
-        - action: end_game
+        - action: end game

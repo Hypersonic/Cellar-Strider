@@ -5,18 +5,26 @@ map: |
     |    H                  A           |
     |   @H                  Ap          |
     |   H                   A           |
-    +------------------------+GGGGGGG+--+
+    +------------------------+       +--+
     |                                   |
     |                                   |
-    |                                   |
-    |                                   |
+    +-------+-----+     +--+     +------+
+    |        \         a|  |a           |
+    |         \        a|  |a           |
+    +----------+----+   +--+   +--------+
+    |                          |
+    |                          |
+    |      +-------------------+
 
 objects:
     p:
-        name: Mysterious_Present
+        name: Mysterious Present
         group: Presents
         visible: True
-
+    a:
+        name: Villager
+        group: Villagers
+        visible: True
 
 
 
@@ -24,25 +32,22 @@ triggers:
     H:
         - action: script
           script:
-            - Strange_Voice: Welcome!
-            - Strange_Voice: There have been 2 new monster attack(s) in the past 24 hour(s)
-            - Strange_Voice: Anyways, you're safe at home, so that means something, right?
-            - Strange_Voice: It'd be /really/ nice if someone did something about those monsters...
-            - Strange_Voice: And someone left you a present!
-            - Strange_Voice: Maybe it's a kitten?
-            - Strange_Voice: If you have further questions, do not hesitate to contact HARVON VILLAGE SUPPORT CENTER.
+            - Strange Voice: Welcome!
+            - Strange Voice: There have been 2 new monster attack(s) in the past 24 hour(s)
+            - Strange Voice: Anyways, you're safe at home, so that means something, right?
+            - Strange Voice: It'd be /really/ nice if someone did something about those monsters...
+            - Strange Voice: And someone left you a present!
+            - Strange Voice: Maybe it's a kitten?
+            - Strange Voice: If you have further questions, do not hesitate to contact HARVON VILLAGE SUPPORT CENTER.
             - You: That was strange...
             - You: Well, better check out that present before heading out.
     A:
         - action: give
-          item: Wooden_Sword
+          item: Wooden Sword
           target: Player
         - action: remove
-          target: Mysterious_Present
+          target: Mysterious Present
         - action: script
           script:
             - Player: Woah, a wooden sword!
             - Player: Just what I've always wanted!
-    G:
-        - action: load_map
-          target: level02
