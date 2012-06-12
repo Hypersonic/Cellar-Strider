@@ -12,10 +12,43 @@ class Display(object):
     REVERSE = curses.A_REVERSE
 
     def __init__(self):
-        self._max_fps = 15
         self._window = None
+        self._max_fps = 15
         self._color_table = {}
+        self._message_buffer = []
         self._last_update_time = time.time()
+
+    def _render_object(self, obj, row, col):
+        if not obj.is_visible:
+            return
+        char = obj.render()
+        if isinstance(char, tuple):
+            self.window.addch(row, col, char[0], char[1])
+        else:
+            self.window.addch(row, col, char)
+
+    def _render_blocking_message(self, message, row):
+        total = sum([len(msg) for msg, flags in message])
+        for i in xrange(total):
+            col = 0
+            for msg, flags in message:
+                for char in msg:
+                    if col > i:
+                        break
+                    if flags:
+                        self.window.addch(row, col, char, flags)
+                    else:
+                        self.window.addch(row, col, char)
+                    col += 1
+            self.window.refresh()
+            time.sleep(0.02)
+
+        self.window.refresh()
+        self.window.nodelay(0)
+        while self.window.getch() != ord(" "):
+            pass
+        self.window.nodelay(1)
+        self.window.deleteln()
 
     def _render_header(self, offset=0):
         template = "    Cellar Strider v{0} by {1}    "
@@ -30,22 +63,21 @@ class Display(object):
                     self._render_object(obj, row + offset, col)
         return offset + len(map) + 1
 
-    def _render_object(self, obj, row, col):
-        if not obj.is_visible:
-            return
-        char = obj.render()
-        if isinstance(char, tuple):
-            self.window.addch(row, col, char[0], char[1])
-        else:
-            self.window.addch(row, col, char)
-
-    @property
-    def max_fps(self):
-        return self._max_fps
+    def _render_messages(self, offset=0):
+        if not self._message_buffer:
+            return offset
+        for message in self._message_buffer:
+            self._render_blocking_message(message, offset)
+        self._message_buffer = []
+        return offset + 2
 
     @property
     def window(self):
         return self._window
+
+    @property
+    def max_fps(self):
+        return self._max_fps
 
     @max_fps.setter
     def max_fps(self, value):
@@ -89,10 +121,14 @@ class Display(object):
     def convert_color(self, name):
         return self._color_table[name]
 
+    def message(self, messages):
+        self._message_buffer += messages
+
     def render(self, map):
         self.window.erase()
         offset = self._render_header()
-        self._render_map(map, offset)
+        offset = self._render_map(map, offset)
+        self._render_messages(offset)
         self.window.refresh()
 
     def tick(self):
