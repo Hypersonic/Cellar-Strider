@@ -15,7 +15,10 @@ class Trigger(Object):
         offset = 0
         for action in self._actions:
             runner, duration = get_action(self.game, action)
-            self.game.schedule(offset, runner)
+            if offset:
+                self.game.schedule(offset, runner)
+            else:
+                runner()
             offset += duration
 
     def _kill_group(self):

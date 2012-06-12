@@ -14,9 +14,16 @@ class Display(object):
     def __init__(self):
         self._window = None
         self._max_fps = 15
+        self._message_scroll_fps = 50
         self._color_table = {}
         self._message_buffer = []
         self._last_update_time = time.time()
+
+    def _block_until_char(self, char):
+        self.window.nodelay(0)
+        while self.window.getch() != ord(char):
+            pass
+        self.window.nodelay(1)
 
     def _render_object(self, obj, row, col):
         if not obj.is_visible:
@@ -28,9 +35,12 @@ class Display(object):
             self.window.addch(row, col, char)
 
     def _render_blocking_message(self, message, row):
-        total = sum([len(msg) for msg, flags in message])
-        for i in xrange(total):
+        maxwidth = sum([len(msg) for msg, flags in message])
+        i = 0
+        while i < maxwidth:
             col = 0
+            if self.window.getch() == ord(" "):
+                i = maxwidth
             for msg, flags in message:
                 for char in msg:
                     if col > i:
@@ -41,13 +51,11 @@ class Display(object):
                         self.window.addch(row, col, char)
                     col += 1
             self.window.refresh()
-            time.sleep(0.02)
+            time.sleep(1.0 / self._message_scroll_fps)
+            i += 1
 
         self.window.refresh()
-        self.window.nodelay(0)
-        while self.window.getch() != ord(" "):
-            pass
-        self.window.nodelay(1)
+        self._block_until_char(" ")
         self.window.deleteln()
 
     def _render_header(self, offset=0):
