@@ -19,6 +19,12 @@ class Display(object):
         self._message_buffer = []
         self._last_update_time = time.time()
 
+    def _block_until_char(self, char):
+        self.window.nodelay(0)
+        while self.window.getch() != ord(char):
+            pass
+        self.window.nodelay(1)
+
     def _block_until_char_with_time_limit(self, char, limit):
         until = time.time() + limit
         while time.time() < until:
@@ -26,12 +32,6 @@ class Display(object):
                 return True
             time.sleep(0.01)
         return False
-
-    def _block_until_char(self, char):
-        self.window.nodelay(0)
-        while self.window.getch() != ord(char):
-            pass
-        self.window.nodelay(1)
 
     def _render_object(self, obj, row, col):
         if not obj.is_visible:
@@ -64,7 +64,7 @@ class Display(object):
 
         successful = self._block_until_char_with_time_limit(" ", limit=3)
         if not successful:
-            self.window.addstr(row, col + 1, "<space>...", self.BOLD)
+            self.window.addstr(row, col + 2, "<space>...", self.BOLD)
             self._block_until_char(" ")
         self.window.deleteln()
 
