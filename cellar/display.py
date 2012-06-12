@@ -19,6 +19,14 @@ class Display(object):
         self._message_buffer = []
         self._last_update_time = time.time()
 
+    def _block_until_char_with_time_limit(self, char, limit):
+        until = time.time() + limit
+        while time.time() < until:
+            if self.window.getch() == ord(char):
+                return True
+            time.sleep(0.01)
+        return False
+
     def _block_until_char(self, char):
         self.window.nodelay(0)
         while self.window.getch() != ord(char):
@@ -54,8 +62,10 @@ class Display(object):
             time.sleep(1.0 / self._message_scroll_fps)
             i += 1
 
-        self.window.refresh()
-        self._block_until_char(" ")
+        successful = self._block_until_char_with_time_limit(" ", limit=3)
+        if not successful:
+            self.window.addstr(row, col + 1, "<space>...", self.BOLD)
+            self._block_until_char(" ")
         self.window.deleteln()
 
     def _render_header(self, offset=0):
