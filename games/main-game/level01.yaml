@@ -44,10 +44,10 @@ triggers:
     A:
         - action: give
           item: Wooden Sword
-          target: Player
+          target: You
         - action: remove
           target: Mysterious Present
         - action: script
           script:
-            - Player: Woah, a wooden sword!
-            - Player: Just what I've always wanted!
+            - You: Woah, a wooden sword!
+            - You: Just what I've always wanted!
