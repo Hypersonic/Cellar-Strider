@@ -12,6 +12,7 @@ class ScriptAction(Action):
             actor, message = line.items()[0]
             messages.append((
                 (actor, self.game.display.BOLD),
-                (": {0}".format(message), 0)
+                (": {0}".format(message), 0),
+                (" <space>", self.game.display.BOLD)
             ))
         self.game.display.message(messages)
