@@ -63,7 +63,7 @@ class Game(object):
         self._handle_global_events(events)
         self._step_schedule()
         self.level.step(events)
-        self.display.render(self.level.map)
+        self.display.render(self.level.map, (self.player.y, self.player.x))
         self.display.tick()
 
     @property

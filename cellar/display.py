@@ -33,6 +33,17 @@ class Display(object):
             time.sleep(0.01)
         return False
 
+    def _crop_map(self, map, center, rows, cols):
+        center_row, center_col = center
+        if len(map) > rows:
+            if center_row < rows / 2:  # Top
+                map = map[:rows]
+            elif center_row > len(map) - rows / 2:  # Bottom
+                map = map[len(map) - rows:]
+            else:  # Bottom half of map
+                map = map[center_row - rows / 2 : center_row + rows / 2]
+        return map
+
     def _render_object(self, obj, row, col):
         if not obj.is_visible:
             return
@@ -68,26 +79,27 @@ class Display(object):
             self._block_until_char(" ")
         self.window.deleteln()
 
-    def _render_header(self, offset=0):
+    def _render_header(self):
         template = "    Cellar Strider v{0} by {1}    "
         header = template.format(__version__, __author__)
-        self.window.addstr(header, self.REVERSE)
-        return offset + 2
+        self.window.addstr(0, 0, header, self.REVERSE)
 
-    def _render_map(self, map, offset=0):
+    def _render_map(self, map, center):
+        rows, cols = self.window.getmaxyx()
+        rows -= 4  # Subtract for header and messages
+        map = self._crop_map(map, center, rows, cols)
         for row, cells in enumerate(map):
             for col, cell in enumerate(cells):
                 for obj in cell:
-                    self._render_object(obj, row + offset, col)
-        return offset + len(map) + 1
+                    self._render_object(obj, row + 2, col)
+        return len(map) + 3
 
-    def _render_messages(self, offset=0):
+    def _render_messages(self, offset):
         if not self._message_buffer:
             return offset
         for message in self._message_buffer:
             self._render_blocking_message(message, offset)
         self._message_buffer = []
-        return offset + 2
 
     @property
     def window(self):
@@ -142,10 +154,10 @@ class Display(object):
     def message(self, messages):
         self._message_buffer += messages
 
-    def render(self, map):
+    def render(self, map, center):
         self.window.erase()
-        offset = self._render_header()
-        offset = self._render_map(map, offset)
+        self._render_header()
+        offset = self._render_map(map, center)
         self._render_messages(offset)
         self.window.refresh()
 
