@@ -14,8 +14,9 @@ from cellar.objects.player import Player
 __all__ = ["Game"]
 
 class Game(object):
-    def __init__(self, display, gamedir):
+    def __init__(self, display, debug, gamedir):
         self._display = display
+        self._debug = debug
         self._gamedir = gamedir
 
         self._playing = False
@@ -63,12 +64,62 @@ class Game(object):
         self._handle_global_events(events)
         self._step_schedule()
         self.level.step(events)
-        self.display.render(self.level.map)
+        self.display.render(self.level.map, (self.player.y, self.player.x))
         self.display.tick()
+
+    def _update_inventory(self, player, events):
+        if ord("w") in events and player.inventory:
+            if not player.current_item:
+                player.current_item = player.inventory[-1]
+            else:
+                index = player.inventory.index(player.current_item)
+                if index == 0:
+                    player.current_item = None
+                else:
+                    player.current_item = player.inventory[index - 1]
+
+        if ord("s") in events and player.inventory:
+            if not player.current_item:
+                player.current_item = player.inventory[0]
+            else:
+                index = player.inventory.index(player.current_item)
+                try:
+                    player.current_item = player.inventory[index + 1]
+                except IndexError:
+                    player.current_item = None
+
+    def _build_inventory(self):
+        events = self._get_events()
+        if ord("q") in events:
+            self.end()
+            return None
+        elif ord(" ") in events:
+            return None
+        self._update_inventory(self.player, events)
+
+        lines = [
+            (0, 0, "Your inventory:", self.display.BOLD),
+            (2, 4, "-", None),
+            (2, 6, "Nothing", self.display.REVERSE if not self.player.current_item else None)
+        ]
+
+        row = 3
+        for item in self.player.inventory:
+            lines.append((row, 4, "-", None))
+            if item is self.player.current_item:
+                lines.append((row, 6, item.name, self.display.REVERSE))
+            else:
+                lines.append((row, 6, item.name, None))
+            row += 1
+        return lines
 
     @property
     def display(self):
         return self._display
+
+    @property
+    def debug(self):
+        return self._debug
 
     @property
     def gamedir(self):
@@ -95,6 +146,9 @@ class Game(object):
         if not kwargs:
             kwargs = {}
         self._schedule.append((time() + when, action, args, kwargs))
+
+    def show_inventory(self):
+        self.display.show_menu(self._build_inventory)        
 
     def play(self):
         levelfile = path.join(self.gamedir, self._entry_level + ".yaml")

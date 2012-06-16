@@ -43,6 +43,9 @@ objects:
         group: Training enemies
         visible: True
         color: red
+        start:
+            - action: attack
+              target: Player
         attributes:
             health: 10
             defense: 1
@@ -57,8 +60,11 @@ triggers:
             - Old Man: I can't let you go out there without some training, can I?
             - Old Man: Here, take this! It ain't much more than a stick, but it'll do the basics.
         - action: give
+          actor: Old Man
           item: Training sword
-          target: Player
+          type: weapon
+          attributes:
+              damage: 5
         - action: script
           script:
             - Old Man: Don't just stand there staring at it! Open up the equip menu with "i", and put it on! 

@@ -11,7 +11,8 @@ class Display(object):
     BOLD = curses.A_BOLD
     REVERSE = curses.A_REVERSE
 
-    def __init__(self):
+    def __init__(self, debug):
+        self._debug = debug
         self._window = None
         self._max_fps = 15
         self._message_scroll_fps = 50
@@ -32,6 +33,32 @@ class Display(object):
                 return True
             time.sleep(0.01)
         return False
+
+    def _crop_map(self, map, center, rows, cols):
+        center_row, center_col = center
+        total_rows = len(map)
+        total_cols = max([len(row) for row in map])
+
+        if total_rows > rows:
+            if center_row < rows / 2:  # Top
+                map = map[:rows]
+            elif center_row > total_rows - rows / 2:  # Bottom
+                map = map[total_rows - rows:]
+            else:  # Middle, where scrolling magic happens
+                top = center_row - rows / 2
+                bottom = center_row + rows / 2
+                map = map[top:bottom]
+
+        if total_cols > cols:
+            if center_col < cols / 2:  # Left
+                map = [row[0:cols] for row in map]
+            elif center_col > total_cols - cols / 2:  # Right
+                map = [row[total_cols - cols:total_cols] for row in map]
+            else:  # Middle, where scrolling magic happens
+                left = center_col - cols / 2
+                right = center_col + cols / 2
+                map = [row[left:right] for row in map]
+        return map
 
     def _render_object(self, obj, row, col):
         if not obj.is_visible:
@@ -68,26 +95,29 @@ class Display(object):
             self._block_until_char(" ")
         self.window.deleteln()
 
-    def _render_header(self, offset=0):
+    def _render_header(self):
         template = "    Cellar Strider v{0} by {1}    "
         header = template.format(__version__, __author__)
-        self.window.addstr(header, self.REVERSE)
-        return offset + 2
+        self.window.addstr(0, 0, header, self.REVERSE)
+        if self._debug:
+            self.window.addstr(0, len(header) + 1, "DEBUG MODE!", self.BOLD)
 
-    def _render_map(self, map, offset=0):
+    def _render_map(self, map, center):
+        rows, cols = self.window.getmaxyx()
+        rows -= 4  # Subtract for header and messages
+        map = self._crop_map(map, center, rows, cols)
         for row, cells in enumerate(map):
             for col, cell in enumerate(cells):
                 for obj in cell:
-                    self._render_object(obj, row + offset, col)
-        return offset + len(map) + 1
+                    self._render_object(obj, row + 2, col)
+        return len(map) + 3
 
-    def _render_messages(self, offset=0):
+    def _render_messages(self, offset):
         if not self._message_buffer:
             return offset
         for message in self._message_buffer:
             self._render_blocking_message(message, offset)
         self._message_buffer = []
-        return offset + 2
 
     @property
     def window(self):
@@ -142,10 +172,24 @@ class Display(object):
     def message(self, messages):
         self._message_buffer += messages
 
-    def render(self, map):
+    def show_menu(self, builder):
+        while 1:
+            lines = builder()
+            if not lines:
+                return
+            self.window.erase()
+            self._render_header()
+            for row, col, line, flags in lines:
+                if flags:
+                    self.window.addstr(row + 2, col, line, flags)
+                else:
+                    self.window.addstr(row + 2, col, line)
+            self.tick()
+
+    def render(self, map, center):
         self.window.erase()
-        offset = self._render_header()
-        offset = self._render_map(map, offset)
+        self._render_header()
+        offset = self._render_map(map, center)
         self._render_messages(offset)
         self.window.refresh()
 
