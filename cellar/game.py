@@ -67,21 +67,50 @@ class Game(object):
         self.display.render(self.level.map, (self.player.y, self.player.x))
         self.display.tick()
 
+    def _update_inventory(self, player, events):
+        if ord("w") in events and player.inventory:
+            if not player.current_item:
+                player.current_item = player.inventory[-1]
+            else:
+                index = player.inventory.index(player.current_item)
+                if index == 0:
+                    player.current_item = None
+                else:
+                    player.current_item = player.inventory[index - 1]
+
+        if ord("s") in events and player.inventory:
+            if not player.current_item:
+                player.current_item = player.inventory[0]
+            else:
+                index = player.inventory.index(player.current_item)
+                try:
+                    player.current_item = player.inventory[index + 1]
+                except IndexError:
+                    player.current_item = None
+
     def _build_inventory(self):
         events = self._get_events()
         if ord("q") in events:
             self.end()
             return None
-        if ord(" ") in events:
+        elif ord(" ") in events:
             return None
+        self._update_inventory(self.player, events)
 
-        row = 2
-        lines = [(0, 0, "Your inventory:", self.display.BOLD)]
+        lines = [
+            (0, 0, "Your inventory:", self.display.BOLD),
+            (2, 4, "-", None),
+            (2, 6, "Nothing", self.display.REVERSE if not self.player.current_item else None)
+        ]
+
+        row = 3
         for item in self.player.inventory:
-            lines.append((row, 4, str(item), None))
+            lines.append((row, 4, "-", None))
+            if item is self.player.current_item:
+                lines.append((row, 6, item.name, self.display.REVERSE))
+            else:
+                lines.append((row, 6, item.name, None))
             row += 1
-        if not self.player.inventory:
-            lines.append((2, 4, "*dust*", None))
         return lines
 
     @property

@@ -12,9 +12,6 @@ class Player(Object):
         self._inventory = []
         self._current_item = None
 
-    def _use_item(self):
-        self._current_item
-
     @property
     def health(self):
         return self._health
@@ -26,6 +23,10 @@ class Player(Object):
     @property
     def current_item(self):
         return self._current_item
+
+    @current_item.setter
+    def current_item(self, value):
+        self._current_item = value
 
     def render(self):
         return "@", self.game.display.CYAN | self.game.display.BOLD
@@ -43,7 +44,8 @@ class Player(Object):
             elif key == ord("i"):
                 self.game.show_inventory()
             elif key == ord(" "):
-                self._use_item()
+                if self._current_item:
+                    self._current_item.use()
         if self.health <= 0:
             self.game.schedule(2, self.game.end)
             self.die()
