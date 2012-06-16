@@ -33,15 +33,6 @@ class Display(object):
             time.sleep(0.01)
         return False
 
-    def _crop_map_horizontally(self, map, left_bound, right_bound):
-        newmap = []
-        for row in map:
-            if len(row) < right_bound:
-                newmap.append(row[left_bound:])
-            else:
-                newmap.append(row[left_bound:right_bound])
-        return newmap
-
     def _crop_map(self, map, center, rows, cols):
         center_row, center_col = center
         total_rows = len(map)
@@ -59,14 +50,13 @@ class Display(object):
 
         if total_cols > cols:
             if center_col < cols / 2:  # Left
-                map = self._crop_map_horizontally(map, 0, cols)
+                map = [row[0:cols] for row in map]
             elif center_col > total_cols - cols / 2:  # Right
-                left = total_cols - cols
-                map = self._crop_map_horizontally(map, left, total_cols)
+                map = [row[total_cols - cols:total_cols] for row in map]
             else:  # Middle, where scrolling magic happens
-                top = center_col - cols / 2
-                bottom = center_col + cols / 2
-                map = self._crop_map_horizontally(map, top, bottom)
+                left = center_col - cols / 2
+                right = center_col + cols / 2
+                map = [row[left:right] for row in map]
         return map
 
     def _render_object(self, obj, row, col):
