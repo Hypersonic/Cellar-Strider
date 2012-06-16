@@ -67,6 +67,23 @@ class Game(object):
         self.display.render(self.level.map, (self.player.y, self.player.x))
         self.display.tick()
 
+    def _build_inventory(self):
+        events = self._get_events()
+        if ord("q") in events:
+            self.end()
+            return None
+        if ord(" ") in events:
+            return None
+
+        row = 2
+        lines = [(0, 0, "Your inventory:", self.display.BOLD)]
+        for item in self.player.inventory:
+            lines.append((row, 4, str(item), None))
+            row += 1
+        if not self.player.inventory:
+            lines.append((2, 4, "*dust*", None))
+        return lines
+
     @property
     def display(self):
         return self._display
@@ -94,15 +111,15 @@ class Game(object):
     def end(self):
         self._playing = False
 
-    def show_inventory(self):
-        pass
-
     def schedule(self, when, action, args=None, kwargs=None):
         if not args:
             args = ()
         if not kwargs:
             kwargs = {}
         self._schedule.append((time() + when, action, args, kwargs))
+
+    def show_inventory(self):
+        self.display.show_menu(self._build_inventory)        
 
     def play(self):
         levelfile = path.join(self.gamedir, self._entry_level + ".yaml")

@@ -9,12 +9,23 @@ class Player(Object):
         super(Player, self).__init__(game, 0, 0)
         self._health = health
 
+        self._inventory = []
+        self._current_item = None
+
     def _use_item(self):
-        pass
+        self._current_item
 
     @property
     def health(self):
         return self._health
+
+    @property
+    def inventory(self):
+        return self._inventory
+
+    @property
+    def current_item(self):
+        return self._current_item
 
     def render(self):
         return "@", self.game.display.CYAN | self.game.display.BOLD

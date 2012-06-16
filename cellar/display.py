@@ -172,6 +172,20 @@ class Display(object):
     def message(self, messages):
         self._message_buffer += messages
 
+    def show_menu(self, builder):
+        while 1:
+            lines = builder()
+            if not lines:
+                return
+            self.window.erase()
+            self._render_header()
+            for row, col, line, flags in lines:
+                if flags:
+                    self.window.addstr(row + 2, col, line, flags)
+                else:
+                    self.window.addstr(row + 2, col, line)
+            self.tick()
+
     def render(self, map, center):
         self.window.erase()
         self._render_header()
