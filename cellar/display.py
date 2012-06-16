@@ -169,6 +169,21 @@ class Display(object):
     def convert_color(self, name):
         return self._color_table[name]
 
+    def debug(self, message):
+        if self._debug:
+            if not isinstance(message, list):
+                message = str(message).splitlines()
+            self.window.erase()
+            self._render_header()
+            self.window.addstr(2, 0, "Debug information:", self.BOLD)
+            row = 4
+            for msg in message:
+                self.window.addstr(4, 0, msg)
+                row += 1
+            self.window.addstr(row + 1, 0, "Press <space> to resume...")
+            self.window.refresh()
+            self._block_until_char(" ")
+
     def message(self, messages):
         self._message_buffer += messages
 

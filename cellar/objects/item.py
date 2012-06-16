@@ -24,5 +24,4 @@ class Item(Object):
         return self._attributes
 
     def use(self):
-        import curses
-        curses.beep()
+        self.game.display.debug(self.attributes)
