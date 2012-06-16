@@ -11,7 +11,8 @@ class Display(object):
     BOLD = curses.A_BOLD
     REVERSE = curses.A_REVERSE
 
-    def __init__(self):
+    def __init__(self, debug):
+        self._debug = debug
         self._window = None
         self._max_fps = 15
         self._message_scroll_fps = 50
@@ -98,6 +99,8 @@ class Display(object):
         template = "    Cellar Strider v{0} by {1}    "
         header = template.format(__version__, __author__)
         self.window.addstr(0, 0, header, self.REVERSE)
+        if self._debug:
+            self.window.addstr(0, len(header) + 1, "DEBUG MODE!", self.BOLD)
 
     def _render_map(self, map, center):
         rows, cols = self.window.getmaxyx()

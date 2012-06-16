@@ -29,6 +29,8 @@ class Player(Object):
                 self.move(0, 1)
             elif key == ord("d"):
                 self.move(1, 0)
+            elif key == ord("i"):
+                self.game.show_inventory()
             elif key == ord(" "):
                 self._use_item()
         if self.health <= 0:

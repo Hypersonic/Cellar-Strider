@@ -14,8 +14,9 @@ from cellar.objects.player import Player
 __all__ = ["Game"]
 
 class Game(object):
-    def __init__(self, display, gamedir):
+    def __init__(self, display, debug, gamedir):
         self._display = display
+        self._debug = debug
         self._gamedir = gamedir
 
         self._playing = False
@@ -71,6 +72,10 @@ class Game(object):
         return self._display
 
     @property
+    def debug(self):
+        return self._debug
+
+    @property
     def gamedir(self):
         return self._gamedir
 
@@ -88,6 +93,9 @@ class Game(object):
 
     def end(self):
         self._playing = False
+
+    def show_inventory(self):
+        pass
 
     def schedule(self, when, action, args=None, kwargs=None):
         if not args:
