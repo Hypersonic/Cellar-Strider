@@ -8,6 +8,7 @@ try:
 except ImportError:
     yaml = None
 
+from cellar.actions import get_action
 from cellar.level import Level
 from cellar.objects.player import Player
 
@@ -146,6 +147,16 @@ class Game(object):
         if not kwargs:
             kwargs = {}
         self._schedule.append((time() + when, action, args, kwargs))
+
+    def do_actions(self, actions):
+        offset = 0
+        for action in actions:
+            runner, duration = get_action(self, action)
+            if offset:
+                self.schedule(offset, runner)
+            else:
+                runner()
+            offset += duration
 
     def show_inventory(self):
         self.display.show_menu(self._build_inventory)        

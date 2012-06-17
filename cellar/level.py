@@ -45,19 +45,6 @@ class Level(object):
             mapdata.append(rowdata)
         return mapdata
 
-    def _create_actor(self, char, row, col):
-        info = self._object_data[char]
-        name = info["name"].upper()
-        group = info["group"].upper()
-        visible = info.get("visible", True)
-        color = self.game.display.convert_color(info.get("color", "white"))
-        attributes = info.get("attributes", {})
-        obj = Actor(self.game, col, row, char, name, group, visible, color,
-                    attributes)
-        self._objects[name].append(obj)
-        self._object_groups[group].append(obj)
-        return obj
-
     def _parse_object(self, char, row, col):
         if char == "@":
             player = self.game.player
@@ -66,7 +53,7 @@ class Level(object):
         elif char in ["+", "-", "|", "\\", "/"]:
             return Wall(self.game, col, row, char)
         elif char in self._object_data:
-            return self._create_actor(char, row, col)
+            return self.create_actor(char, row, col)
         elif char in self._trigger_data:
             actions = self._trigger_data[char]
             trigger = Trigger(self.game, col, row, char, actions)
@@ -105,6 +92,20 @@ class Level(object):
     @property
     def triggers(self):
         return self._triggers
+
+    def create_actor(self, char, row, col):
+        info = self._object_data[char]
+        name = info["name"].upper()
+        group = info["group"].upper()
+        visible = info.get("visible", True)
+        color = self.game.display.convert_color(info.get("color", "white"))
+        start = info.get("start", [])
+        attributes = info.get("attributes", {})
+        obj = Actor(self.game, col, row, char, name, group, visible, color,
+                    start, attributes)
+        self._objects[name].append(obj)
+        self._object_groups[group].append(obj)
+        return obj
 
     def step(self, events):
         stepped = []

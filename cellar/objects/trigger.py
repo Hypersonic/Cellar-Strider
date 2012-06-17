@@ -1,6 +1,5 @@
 # -*- coding: utf-8  -*-
 
-from cellar.actions import get_action
 from cellar.objects import Object
 
 __all__ = ["Trigger"]
@@ -11,16 +10,6 @@ class Trigger(Object):
         self._group = group
         self._actions = actions
 
-    def _do_actions(self):
-        offset = 0
-        for action in self._actions:
-            runner, duration = get_action(self.game, action)
-            if offset:
-                self.game.schedule(offset, runner)
-            else:
-                runner()
-            offset += duration
-
     def _kill_group(self):
         for member in self.game.level.triggers[self._group]:
             member.die()
@@ -29,5 +18,5 @@ class Trigger(Object):
     def step(self, events):
         here = self.game.level.map[self.y][self.x]
         if self.game.player in here:
-            self._do_actions()
+            self.game.do_actions(self._actions)
             self._kill_group()
