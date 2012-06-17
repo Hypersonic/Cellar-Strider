@@ -93,6 +93,14 @@ class Level(object):
     def triggers(self):
         return self._triggers
 
+    def get_actors(self, ident):
+        actor = ident.upper()
+        if actor.startswith("GROUP(") and actor.endswith(")"):
+            group = actor[6:-1]
+            return self.game.level.object_groups[group]
+        else:
+            return self.game.level.objects[actor]
+
     def create_actor(self, char, row, col):
         info = self._object_data[char]
         name = info["name"].upper()

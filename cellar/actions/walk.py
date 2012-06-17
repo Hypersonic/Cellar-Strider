@@ -1,70 +1,101 @@
 # -*- coding: utf-8  -*-
 
+from sys import maxint
+
 from cellar.actions import Action
-import math
 
 __all__ = ["WalkAction"]
 
 class WalkAction(Action):
-    def _neighbor_nodes(self, current):
-        """ Returns the neighboring coordinates to the input coordinate,
-        as a list of tuples """
+    def _get_neighbor_nodes(self, map, point):
+        """Return the neighboring nodes of the input node (point)."""
+        tests = [
+            (point[0] + 1, point[1]),
+            (point[0] - 1, point[1]),
+            (point[0], point[1] + 1),
+            (point[0], point[1] - 1)
+        ]
         nodes = []
-        if current[0] + 1 >= 0:
-            nodes.append((current[0] + 1, current[1]))
-        if current[0] - 1 >= 0:
-            nodes.append((current[0] - 1, current[1]))
-        if current[1] + 1 >= 0:
-            nodes.append((current[0], current[1] + 1))
-        if current[1] - 1 >= 0:
-            nodes.append((current[0], current[1] - 1))
+        for node in tests:
+            if node[0] < 0 or node[1] < 0:  # Cannot be negative!
+                continue
+            try:
+                point = map[node[1]][node[0]]
+            except IndexError:
+                continue
+            if not point:  # Must not be a wall:
+                nodes.append(node)
         return nodes
-    
-    def _depth_first_search(self, map, start, goal):
-        # so the map is 0's representing navigable space, and 1's
-        # representing walls
-        start = (start[0], start[1]) # make sure that start is a tuple for easier use later
-        goal = (goal[0], goal[1]) # do the same for goal
-        fitness = {} # (x, y) -> fitness
-        for x in range(len(map)):
-            for y in range(x):
-                fitness[(x, y)] = 2 ** 32 # Set all the fitnesses to a stupidly high value
+
+    def _get_path(self, map, start, goal):
+        fitness = {}  # (x, y) -> fitness
+
+        # Set all the fitnesses to a stupidly high value:
+        for y, row in enumerate(map):
+            for x in range(len(row)):
+                fitness[(x, y)] = maxint
+
         fitness[start] = 0
-        current = start
-        try:
-            while current != goal:
-                neighbors = self._neighbor_nodes(current) # find the neighbors of this tile
+        jobs = [start]
+        while jobs:
+            for job in jobs:
+                neighbors = self._get_neighbor_nodes(map, job)
                 for neighbor in neighbors:
-                    if fitness[neighbor] > fitness[current] and map[neighbor[0]][neighbor[1]] == 0: # it's closer to this that previously thought, and it's not a wall
-                            fitness[neighbor] = fitness[current] + 1 #increment their fitness from the current tile's
-                current = neighbor[0] # switch up the current tile
-            # at this point all the fitnesses are set, or at least they should be, so it's time to make the path
-            path = [] # empty path, will eventually be (x,y)s from the start to the goal
-            current = goal
-            while current != start:
-                path.append[current]
-                neighbors = self._neighbor_nodes(current)
-                # find the neighbor with the lowest fitness value
-                next = neighbors[0]
-                for neighbor in neighbors:
-                    if fitness[next] > fitness[neighbor]:
-                        next = neighbor
-                current = next
-            path.reverse() # since we went from end to start, the path is obviously backwards. So we have to reverse it
-            return path
-        except:
-            self.game.display.debug(fitness)
-    
-    def _convert_map(self, map):
-        # Converts a level map to 1s and 0s for the pathfinding code to be easier
-        pass
-    
+                    #self.game.display.debug((job, neighbor, fitness[job], fitness[neighbor]))
+                    if fitness[neighbor] > fitness[job]:
+                        # Increment their fitness from the current tile's:
+                        fitness[neighbor] = fitness[job] + 1
+                        jobs.append(neighbor)
+
+        # At this point all the fitnesses are set, or at least they should be,
+        # so it's time to make the path:
+        path = []  # Empty path, will eventually be (x,y)s from the start to
+                   # the goal
+
+        current = goal
+        while current != start:
+            path.append(current)
+            neighbors = self._get_neighbor_nodes(map, current)
+            # Find the neighbor with the lowest fitness value:
+            next = neighbors[0]
+            for neighbor in neighbors:
+                if fitness[next] > fitness[neighbor]:
+                    next = neighbor
+            current = next
+
+        # Since we went from end to start, the path is obviously backwards. So
+        # we have to reverse it:
+        path.reverse()
+        return path
+
+    def _convert_map(self, map, actors, dest):
+        """Convert a level map to 1s and 0s for the pathfinding code.
+
+        1 represents a square that you cannot go on, whereas 0 is a square that
+        you can.
+        """
+        newmap = [[1 if any([obj.is_visible for obj in cell]) else 0 \
+                  for cell in row] for row in map]
+
+        for actor in actors:
+            newmap[actor.y][actor.x] = 0
+        newmap[dest.y][dest.x] = 0
+        return newmap
+
     def execute(self):
-        map = self._convert_map(self.game.level.map)
-        path = []
-        map = [[0,1,0,0],
-               [0,1,0,0],
-               [0,1,1,0],
-               [0,0,0,0]]
-        path = self._depth_first_search(map, (0,0), (0,2))
-        print path
+        actors = self.game.level.get_actors(self.data["actor"])
+        destination = self.game.level.get_actors(self.data["target"])[0]
+        map = self._convert_map(self.game.level.map, actors, destination)
+        end = (destination.x, destination.y)
+        keep_going = False
+
+        for actor in actors:
+            start = actor.x, actor.y
+            path = self._get_path(map, start, end)
+            if path:
+                actor.move(path[0][0] - actor.x, path[0][1] - actor.y)
+            if len(path) > 1:
+                keep_going = True
+
+        if keep_going:
+            self.game.schedule(0, self.execute)
