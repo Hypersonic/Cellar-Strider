@@ -79,7 +79,7 @@ triggers:
             - Old Man: Do you really think I'd send you into combat with only a training sword?
         - action: spawn
           actor: group(Spawners)
-          target: group(Training enemies)
+          target: D
     G:
         - action: script
           script:

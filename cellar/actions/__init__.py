@@ -2,6 +2,7 @@
 
 from cellar.actions.action import Action
 
+from cellar.actions.attack import AttackAction
 from cellar.actions.end_game import EndGameAction
 from cellar.actions.give import GiveAction
 from cellar.actions.remove import RemoveAction
@@ -12,6 +13,7 @@ from cellar.actions.walk import WalkAction
 __all__ = ["Action", "get_action"]
 
 _actions = {
+    "attack": AttackAction,
     "end game": EndGameAction,
     "give": GiveAction,
     "remove": RemoveAction,
