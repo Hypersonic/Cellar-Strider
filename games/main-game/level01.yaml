@@ -97,7 +97,7 @@ objects:
         die:
             - action: script
               script:
-                - Boss: You have proved a worthy challenger, hero.
+                - Boss: You have proven yourself a worthy challenger, hero.
                 - Boss: "*cough* Ugh... *cough*"
                 - Boss: "Here are the *cough* keys to get out of your *cough* house..."
                 - Boss: "You *cough* earned them well..."

@@ -64,6 +64,7 @@ objects:
                 - ???: An orange!
                 - ???: The most powerful weapon in the free world!
                 - ???: The gods must smile upon you, O strange one!
+                - You: Ugh. I don't think he had the key.
         attributes:
             health: 30
 
@@ -73,16 +74,31 @@ objects:
         visible: True
         color: red
         start:
+            - action: script
+              script:
+                - Boss: Hah! Finally!
+                - Boss: I have been stuck in this damp sewer for eons.
+                - Boss: Do you know know hard it is to get my goblin minions to bring me food?
+                - Boss: They just don't listen, nope.
+                - Boss: I would much rather have my food come to me instead!
+                - Boss: Prepare to die, human!
             - action: attack
               target: Player
               speed: 0
               damage: 40
         die:
+            - action: script
+              script:
+                - Boss: You've fought well, human.
+                - Boss: Take this magical exit key. The door's to your left.
             - action: give
               item: Magical Exit Key
               type: key
               attributes:
                   unlock: Exit Door
+            - action: script
+              script:
+                - You: Well, that was... anticlimactic.
         attributes:
             health: 200
 
@@ -178,10 +194,10 @@ triggers:
     3: #chest 3
         - action: give
           actor: The chest
-          item: Something Strange
-          type: weapon
+          item: Some Strange Mixture
+          type: potion
           attributes:
-               damage: 10
+               health: 50
 
     a: #enemy trigger
         - action: spawn
@@ -212,15 +228,22 @@ triggers:
         - action: spawn
           actor: Goblin Spawner X
           target: k 
+        - action: script
+          script:
+              You: Strange...
+              You: Is that a rumbling noise I hear?
 
     h: # boss trigger
+        - action: script
+          script:
+              You: Oh no...
         - action: spawn
-          actor: group(Boss Spawners)
-          target: M 
+          actor: Boss Spawner
+          target: M
 
     i: # miniboss trigger
         - action: spawn
-          actor: group(Mini-Boss Spawners)
+          actor: Mini-Boss Spawner
           target: B
 
     N: # next level
