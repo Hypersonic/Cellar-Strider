@@ -22,8 +22,8 @@ map: |
                      \      \        +------------+     |     +---------+    /      +   +---------------+   |    /
                       \      \                   /     /      |        /    /          /               /    +   /
                        \      \     +----+      /     /          /    /    /------+   /    +------    /        /
-                        \      \   /  1c |     /   s /     +----+    /    /   t  /   /    / c2       /    +---+
-                         \      \ /    1 |    /     /     /         /    /    / /   /    /222       /    /w u /
+                        \      \   /  1c1|     /   s /     +----+    /    /   t  /   /    / c2       /    +---+
+                         \      \ /   111|    /     /     /         /    /    / /   /    /222       /    /w u /
                           \      +       |   /     /     /   s     /    /    /     /    /          /    / xw /
                            \      \     /   /     +-----+         /    /    +-----+    /          /      xu /
                             \   s  \   /   /                     / t  /               /          /---------+
@@ -66,7 +66,7 @@ objects:
                 - ???: The gods must smile upon you, O strange one!
                 - You: Ugh. I don't think he had the key.
         attributes:
-            health: 30
+            health: 50
 
     M: # boss
         name: Boss
@@ -175,7 +175,7 @@ triggers:
             - You: Wait, where am I?
             - You: This isn't my house!
     
-    1: #chest 1
+    "1": #chest 1
         - action: give
           actor: The chest
           item: Iron Sword
@@ -183,7 +183,7 @@ triggers:
           attributes:
                damage: 15
 
-    2: #chest 2
+    "2": #chest 2
         - action: give
           actor: The chest
           item: Bronze Sword
@@ -191,7 +191,7 @@ triggers:
           attributes:
                damage: 12
 
-    3: #chest 3
+    "3": #chest 3
         - action: give
           actor: The chest
           item: Some Strange Mixture
@@ -227,16 +227,16 @@ triggers:
     g: #enemy trigger
         - action: spawn
           actor: Goblin Spawner X
-          target: k 
+          target: k
         - action: script
           script:
-              You: Strange...
-              You: Is that a rumbling noise I hear?
+            - You: Strange...
+            - You: Is that a rumbling noise I hear?
 
     h: # boss trigger
         - action: script
           script:
-              You: Oh no...
+            - You: Oh no...
         - action: spawn
           actor: Boss Spawner
           target: M
