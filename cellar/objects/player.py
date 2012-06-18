@@ -78,8 +78,7 @@ class Player(Object):
         if self.health == -1:
             self.health = 0  # Don't trigger this again
             self.invincible = True
-            next = 2.0 / self.game.display.max_fps
-            self.game.schedule(next, self.die)
+            self.game.schedule(0.2, self.die)
 
     def hit(self, damage):
         if self.invincible:
@@ -91,5 +90,4 @@ class Player(Object):
 
         self.game.display.beep()
         self.invincible = True
-        next = 1.0 / self.game.display.max_fps
-        self.game.schedule(next, self._reset_invincibility)
+        self.game.schedule(0.2, self._reset_invincibility)

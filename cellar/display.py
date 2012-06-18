@@ -1,6 +1,7 @@
 # -*- coding: utf-8  -*-
 
 import curses
+import math
 import time
 
 from cellar import __author__, __version__
@@ -42,21 +43,21 @@ class Display(object):
         if total_rows > rows:
             if center_row < rows / 2:  # Top
                 map = map[:rows]
-            elif center_row > total_rows - rows / 2:  # Bottom
+            elif center_row >= total_rows - rows / 2:  # Bottom
                 map = map[total_rows - rows:]
             else:  # Middle, where scrolling magic happens
-                top = center_row - rows / 2
-                bottom = center_row + rows / 2
+                top = int(math.floor(center_row - rows / 2.0))
+                bottom = int(math.ceil(center_row + rows / 2.0))
                 map = map[top:bottom]
 
         if total_cols > cols:
             if center_col < cols / 2:  # Left
                 map = [row[0:cols] for row in map]
-            elif center_col > total_cols - cols / 2:  # Right
+            elif center_col >= total_cols - cols / 2:  # Right
                 map = [row[total_cols - cols:total_cols] for row in map]
             else:  # Middle, where scrolling magic happens
-                left = center_col - cols / 2
-                right = center_col + cols / 2
+                left = int(math.floor(center_col - cols / 2.0))
+                right = int(math.ceil(center_col + cols / 2.0))
                 map = [row[left:right] for row in map]
         return map
 
@@ -113,6 +114,11 @@ class Display(object):
     def _render_map(self, map, center):
         rows, cols = self.window.getmaxyx()
         rows -= 7  # Subtract for header and messages
+        if rows % 2 == 1:
+            rows -= 1
+        if rows > 30:
+            rows = 30
+
         map = self._crop_map(map, center, rows, cols)
         for row, cells in enumerate(map):
             for col, cell in enumerate(cells):

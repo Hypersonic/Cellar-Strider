@@ -128,5 +128,5 @@ class WalkAction(Action):
                 keep_going = True
 
         if keep_going:
-            wait = float(speed) / self.game.display.max_fps
+            wait = speed / 15.0
             self.game.schedule(wait, self.execute)

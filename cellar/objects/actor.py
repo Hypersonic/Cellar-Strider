@@ -60,8 +60,7 @@ class Actor(Object):
                 oper = self.die
             else:
                 oper = self._unhighlight
-            next = 2.0 / self.game.display.max_fps
-            self.game.schedule(next, oper)
+            self.game.schedule(0.2, oper)
 
     def step(self, events):
         if self._action_queue:
