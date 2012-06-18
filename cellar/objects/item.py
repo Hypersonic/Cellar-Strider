@@ -46,11 +46,13 @@ class Item(Object):
                 targets[0].die()
             self.game.player.inventory.remove(self)
             self.game.player.current_item = None
+            self.game.display.flash()
 
     def _use_potion(self):
         self.game.player.health += self.attributes["health"]
         self.game.player.inventory.remove(self)
         self.game.player.current_item = None
+        self.game.display.flash()
 
     @property
     def name(self):

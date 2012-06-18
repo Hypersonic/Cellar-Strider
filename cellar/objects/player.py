@@ -45,12 +45,13 @@ class Player(Object):
         self._invincible = value
 
     def die(self):
-        self.game.level.map[self.y][self.x].remove(self)
-        self.game.level.objects["PLAYER"].remove(self)
-        self.game.level.object_groups["PLAYER"].remove(self)
-        self._alive = False
-        self.game.schedule(2, self.game.end)
-        self.game.display.flash()
+        if self._alive:
+            self._alive = False
+            self.game.level.map[self.y][self.x].remove(self)
+            self.game.level.objects["PLAYER"].remove(self)
+            self.game.level.object_groups["PLAYER"].remove(self)
+            self.game.schedule(2, self.game.end)
+            self.game.display.flash()
 
     def render(self):
         if self.invincible:
@@ -74,8 +75,8 @@ class Player(Object):
                 if self._current_item:
                     self._current_item.use()
 
-        if self.health == 0:
-            self.health = -1  # Don't trigger this again
+        if self.health == -1:
+            self.health = 0  # Don't trigger this again
             self.invincible = True
             next = 2.0 / self.game.display.max_fps
             self.game.schedule(next, self.die)
@@ -85,8 +86,8 @@ class Player(Object):
             return
 
         self.health -= damage
-        if self.health < 0:
-            self.health = 0
+        if self.health <= 0:
+            self.health = -1
 
         self.game.display.beep()
         self.invincible = True

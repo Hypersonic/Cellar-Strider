@@ -1,7 +1,7 @@
 # main-game level 2
 
 map: |
-    1                           -----+-------------------------------------------------------------------+----+
+    1                               +--------------------------------------------------------------------+----+
                                    /             x          hhhhh|        \             /    /     /     |     \
                                   +                         \    |   \     \           /33| /  \  /  \   |  /   \
                                   \    S                     +   |    \     \         / c \     \     \    /     \
@@ -77,14 +77,14 @@ objects:
             - action: script
               script:
                 - Boss: Hah! Finally!
-                - Boss: I have been stuck in this damp sewer for eons.
+                - Boss: I have been stuck in this damp cellar for eons.
                 - Boss: Do you know know hard it is to get my goblin minions to bring me food?
                 - Boss: They just don't listen, nope.
                 - Boss: I would much rather have my food come to me instead!
                 - Boss: Prepare to die, human!
             - action: attack
               target: Player
-              speed: 0
+              speed: 2
               damage: 40
         die:
             - action: script
@@ -178,18 +178,18 @@ triggers:
     "1": #chest 1
         - action: give
           actor: The chest
-          item: Iron Sword
-          type: weapon
-          attributes:
-               damage: 15
-
-    "2": #chest 2
-        - action: give
-          actor: The chest
           item: Bronze Sword
           type: weapon
           attributes:
                damage: 12
+
+    "2": #chest 2
+        - action: give
+          actor: The chest
+          item: Iron Sword
+          type: weapon
+          attributes:
+               damage: 15
 
     "3": #chest 3
         - action: give

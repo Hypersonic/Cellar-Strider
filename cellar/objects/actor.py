@@ -39,11 +39,12 @@ class Actor(Object):
         return self._attributes
 
     def die(self):
-        self.game.do_actions(self._on_die)
-        self.game.level.map[self.y][self.x].remove(self)
-        self.game.level.objects[self._name].remove(self)
-        self.game.level.object_groups[self._group].remove(self)
-        self._alive = False
+        if self._alive:
+            self._alive = False
+            self.game.do_actions(self._on_die)
+            self.game.level.map[self.y][self.x].remove(self)
+            self.game.level.objects[self._name].remove(self)
+            self.game.level.object_groups[self._group].remove(self)
 
     def render(self):
         return self._char, self._color
