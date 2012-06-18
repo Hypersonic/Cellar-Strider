@@ -27,29 +27,19 @@ class WalkAction(Action):
                 nodes.append(node)
         return nodes
 
-    def _debug(self, fitness, job, neighbor, jobs):
-        from collections import defaultdict
-        map = defaultdict(lambda: defaultdict(list))
-        for point in fitness:
-            fit = [fitness[point], None]
-            if fit[0] == maxint:
-                fit = [-1, self.game.display.YELLOW]
-            if point == job:
-                fit[1] = self.game.display.RED | self.game.display.BOLD
-            if point == neighbor:
-                fit[1] = self.game.display.GREEN | self.game.display.BOLD
-            map[point[1]][point[0]] = fit
-
-        self.game.display.window.erase()
-        self.game.display._render_header()
-        self.game.display.window.addstr(2, 0, "Job queue length: {0}".format(len(jobs)))
-        for row, cells in map.iteritems():
-            for col, (char, flags) in cells.iteritems():
-                if flags:
-                    self.game.display.window.addstr(row + 4, col * 3, str(char).rjust(3), flags)
-                else:
-                    self.game.display.window.addstr(row + 4, col * 3, str(char).rjust(3))
-        self.game.display.window.refresh()
+    def _calculate_fitness(self, fitness, map, start, goal):
+        jobs = [start]
+        while jobs:
+            for job in jobs:
+                neighbors = self._get_neighbor_nodes(map, job)
+                for neighbor in neighbors:
+                    #self._debug(fitness, job, neighbor, jobs)
+                    if fitness[neighbor] == maxint:
+                        # Increment their fitness from the current tile's:
+                        fitness[neighbor] = fitness[job] + 1
+                        jobs.append(neighbor)
+                    if neighbor == goal:
+                        return fitness
 
     def _get_path(self, map, start, goal):
         fitness = {}  # (x, y) -> fitness
@@ -60,21 +50,7 @@ class WalkAction(Action):
                 fitness[(x, y)] = maxint
 
         fitness[start] = 0
-        jobs = [start]
-        try:
-            while jobs:
-                for job in jobs:
-                    neighbors = self._get_neighbor_nodes(map, job)
-                    for neighbor in neighbors:
-                        #self._debug(fitness, job, neighbor, jobs)
-                        if fitness[neighbor] == maxint:
-                            # Increment their fitness from the current tile's:
-                            fitness[neighbor] = fitness[job] + 1
-                            jobs.append(neighbor)
-                        if neighbor == goal:
-                            raise StopIteration
-        except StopIteration:
-            pass
+        self._calculate_fitness(fitness, map, start, goal)
 
         # At this point all the fitnesses are set, or at least they should be,
         # so it's time to make the path:
