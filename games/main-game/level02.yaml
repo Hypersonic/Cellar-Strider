@@ -23,9 +23,9 @@ map: |
                       \      \                   /     /      |        /    /          /               /    +   /
                        \      \     +----+      /     /          /    /    /------+   /    +------    /        /
                         \      \   /  1c |     /   s /     +----+    /    /   t  /   /    / c2       /    +---+
-                         \      \ /    1 |    /     /     /         /    /    / /   /    /222       /    / 4c /
-                          \      +       |   /     /     /   s     /    /    /     /    /          /    /   4/
-                           \      \     /   /     +-----+         /    /    +-----+    /          /       u /
+                         \      \ /    1 |    /     /     /         /    /    / /   /    /222       /    /w u /
+                          \      +       |   /     /     /   s     /    /    /     /    /          /    / xw /
+                           \      \     /   /     +-----+         /    /    +-----+    /          /      xu /
                             \   s  \   /   /                     / t  /               /          /---------+
                              \      \ / s /       +-------------+    +---------------+     t    /
                               \          /            b                                        /
@@ -38,13 +38,35 @@ objects:
         visible: True
         color: red
         start:
+            - action: script
+              script:
+                - Boss: Who dares enter my lair?
+                - Boss: Ah, a defenseless traveler?
+                - Boss: I shall destroy you!
             - action: attack
               target: Player
               speed: 1
               damage: 20
+        die:
+            - action: script
+              script:
+                - Boss: Gah! That's enough.
+                - Boss: Here, take this orange.
+                - Boss: Now leave me alone!
+            - action: give
+              item: An Orange
+              type: weapon
+              attributes:
+                   damage: 40
+            - action: script
+              script:
+                - You: An orange?
+                - ???: An orange!
+                - ???: The most powerful weapon in the free world!
+                - ???: The gods must smile upon you, O strange one!
         attributes:
             health: 30
-       
+
     M: # boss
         name: Boss
         group: Bosses
@@ -62,7 +84,7 @@ objects:
               attributes:
                   unlock: Exit Door
         attributes:
-            health: 60
+            health: 200
 
     c: #chest
         name: Chest
@@ -160,19 +182,6 @@ triggers:
           type: weapon
           attributes:
                damage: 10
-
-    4: #chest 4
-        - action: give
-          actor: The chest
-          item: An orange
-          type: weapon
-          attributes:
-               damage: 20
-        - action: script
-          script:
-            - ???: An orange!
-            - ???: The most powerful weapon in the free world!
-            - ???: The gods must smile upon you, O strange one!
 
     a: #enemy trigger
         - action: spawn
