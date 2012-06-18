@@ -1,5 +1,6 @@
 # -*- coding: utf-8  -*-
 
+from random import random
 from sys import maxint
 
 from cellar.actions import Action
@@ -33,7 +34,6 @@ class WalkAction(Action):
             for job in jobs:
                 neighbors = self._get_neighbor_nodes(map, job)
                 for neighbor in neighbors:
-                    #self._debug(fitness, job, neighbor, jobs)
                     if fitness[neighbor] == maxint:
                         # Increment their fitness from the current tile's:
                         fitness[neighbor] = fitness[job] + 1
@@ -41,17 +41,7 @@ class WalkAction(Action):
                     if neighbor == goal:
                         return fitness
 
-    def _get_path(self, map, start, goal):
-        fitness = {}  # (x, y) -> fitness
-
-        # Set all the fitnesses to a stupidly high value:
-        for y, row in enumerate(map):
-            for x in range(len(row)):
-                fitness[(x, y)] = maxint
-
-        fitness[start] = 0
-        self._calculate_fitness(fitness, map, start, goal)
-
+    def _calculate_path_by_fitness(self, fitness, map, start, goal):
         # At this point all the fitnesses are set, or at least they should be,
         # so it's time to make the path:
         path = [goal]
@@ -59,14 +49,30 @@ class WalkAction(Action):
         while 1:
             neighbors = self._get_neighbor_nodes(map, this)
             for neighbor in neighbors:
-                if fitness[neighbor] < fitness[this]:
+                if fitness[neighbor] == fitness[this]:
+                    # To vary the route a bit, randomly pick another path if it
+                    # has the same fitness as the current one
+                    if round(random()):
+                        this = neighbor
+                elif fitness[neighbor] < fitness[this]:
                     this = neighbor
             if this == start:
-                break
+                return path
             path.append(this)
 
-        # Since we went from end to start, the path is obviously backwards. So
-        # we have to reverse it:
+    def _get_path(self, map, start, goal):
+        fitness = {}  # (x, y) -> fitness
+        # Set all the fitnesses to a stupidly high value:
+        for y, row in enumerate(map):
+            for x in range(len(row)):
+                fitness[(x, y)] = maxint
+
+        fitness[start] = 0
+        self._calculate_fitness(fitness, map, start, goal)
+        path = self._calculate_path_by_fitness(fitness, map, start, goal)
+
+        # Since we went from end to start, the path is backwards, so we have to
+        # reverse it:
         path.reverse()
         return path
 
