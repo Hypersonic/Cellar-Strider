@@ -3,26 +3,42 @@ Cellar Strider
 
 A game where you stride around a cellar!
 
-Maps
-====
-
-The map format can be viewed in the map_format.yaml file.
-
 Dependencies
 ============
 
-This game depends on the following:
+Cellar Strider runs on pure Python, using the `curses` module for drawing,
+which is a wrapper for `ncurses`. This should come with Python. The sole
+external dependency is `PyYAML`, used for loading map files. You can
+install it automatically by running:
 
-1. YAML
-2. Curses/nCurses
-
-You can automatically install the dependencies by running:
->    python setup.py develop --user
-
-or
-
->    sudo python setup.py develop
+> pip install PyYAML
 
 or
 
->    sudo python setup.py install
+> easy_install PyYAML
+
+...which may require `sudo`.
+
+Running
+=======
+
+To play, simply run `main.py`. It will ask you to select a game, or "map pack".
+Choose the tutorial to start with, so you can get a feeling for the controls,
+but definitely check out the main game once you've finished it -- that's where
+the action's at!
+
+Controls
+========
+
+The game is completely keyboard-based. Use `WASD` to navigate the player.
+`Enter` (or `Return`) is used to progress through most dialogs and messages.
+
+Press `i` to open your inventory, select an item with `W` and `S`, then close
+the inventory with `Enter`. To use the item, press `Space` while in the game.
+
+Maps
+====
+
+A sample of the map format can be viewed in `games/tutorial/tutorial.yaml`. A
+(much) more complex example is `games/main-game/level02.yaml`.
+

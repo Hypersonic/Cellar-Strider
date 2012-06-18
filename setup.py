@@ -24,7 +24,7 @@ setup(
     keywords = "cellar strider roguelike text-based game hypersonic earwig",
     license = "MIT License",
     classifiers = [
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Environment :: Console :: Curses",
         "Intended Audience :: End Users/Desktop",
         "License :: OSI Approved :: MIT License",
