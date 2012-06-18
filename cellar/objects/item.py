@@ -11,6 +11,15 @@ class Item(Object):
         self._type = itemtype
         self._attributes = attributes
 
+    def _use_weapon(self):
+        pass
+
+    def _use_key(self):
+        pass
+
+    def _use_potion(self):
+        pass
+
     @property
     def name(self):
         return self._name
@@ -24,4 +33,11 @@ class Item(Object):
         return self._attributes
 
     def use(self):
-        self.game.display.debug(self.attributes)
+        if self.type == "weapon":
+            self._use_weapon()
+        elif self.type == "key":
+            self._use_key()
+        elif self.type == "potion":
+            self._use_potion()
+        else:
+            raise NotImplementedError(self.type)
