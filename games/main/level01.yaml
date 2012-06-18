@@ -89,7 +89,7 @@ objects:
             - action: attack
               target: Player
               speed: 1
-              damage: 25
+              damage: 15
         die:
             - action: script
               script:
@@ -106,7 +106,7 @@ objects:
               script:
                 - You: Hmm... I wonder where the exit is?
         attributes:
-            health: 40
+            health: 30
     e:
         name: Spawner
         group: Weak Goblin Spawners
@@ -124,7 +124,7 @@ objects:
             - action: attack
               target: Player
               speed: 2
-              damage: 10
+              damage: 3
         attributes:
             health: 10
     F:
@@ -136,7 +136,7 @@ objects:
             - action: attack
               target: Player
               speed: 2
-              damage: 10
+              damage: 7
         attributes:
             health: 15
     =:
@@ -202,7 +202,7 @@ triggers:
           item: Reinforced Wooden Sword
           type: weapon
           attributes:
-               damage: 10
+               damage: 12
     b: # Spawn weak goblins
         - action: spawn
           actor: group(Weak Goblin Spawners)
