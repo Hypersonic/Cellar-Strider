@@ -1,2 +1,184 @@
 # main-game level 2
 
+map: |
+
+
+
+                                -----+-------------------------------------------------------------------+----+
+                                   /             s          hhhhh|        \             /    /     /     |     \
+                                  +                         \    |   \     \           /33| /  \  /  \   |  /   \ 
+                                  \    S                     +   |    \     \         / c \     \     \    /     \
+                               +---+                    s    |   |     \ s   \       /----/   +-----------+  s    \
+           +-------+           |n  |                         |ggg|      \     +-----+                      \       +
+          /         \          +---+                         +   |  s    \                                  \     /
+         +          a\            /       s                   \           \                                  |fff/
+         |         a  +-------------------------------------------------------------------------------+      |  +
+         |    +---+        d   s                 s                   s                 s               \    s|   \
+         /   /    |         d          s                    s                         s                 \    |    \
+        /   /     |      +-------+---------------+---------------------------------------------------+   \   +     +
+    +--+   /      |             /                 \             |                 \      s            \   \        |
+    |     /       |            /  /+---------+     \   +-----+  /  +----+-------+  \                   \   \       |
+    | @  /        |     s     /  //           \     \       /  /   |   / \    |  \  +             N     +   +      |
+    +---+         +          /  //  /\         \     \     /          /    /      |ii                   |   |      |
+                   \        /      /  \      s  \     \   +--------------------+ee+   +                 |  s|      +
+                    \      +------+              \     \   s                  /    \ / \  s           s |   |     /
+                     \      \        +------------+     |     +---------+    /      +   +---------------+   |    /
+                      \      \                   /     /      |        /    /          /               /    +   /
+                       \      \     +----+      /     /          /    /    /------+   /    +------    /        /
+                        \      \   /  1c |     /   s /     +----+    /    /   s  /   /    / c2       /    +---+
+                         \      \ /    1 |    /     /     /         /    /    / /   /    /222       /    / 4c /
+                          \      +       |   /     /     /   s     /    /    /     /    /          /    /   4/
+                           \      \     /   /     +-----+         /    /    +-----+    /          /       s /
+                            \   s  \   /   /                     / s  /               /          /---------+
+                             \      \ / s /       +-------------+    +---------------+     s    /
+                              \          /            b                                        /
+                               +--------------------------------------------------------------+
+
+objects:
+    B: #Miniboss
+        name: MiniBoss
+        group: MiniBosses
+        visible: True
+        color: red
+        start:
+            - action: attack
+              target: Player
+        attributes:
+            health: 30
+            defense: 4
+            speed: 2
+            attack: 6
+       
+    M: # boss
+        name: Boss
+        group: Bosses
+        visible: True
+        color: red
+        start:
+            - action: attack
+              target: Player
+        attributes:
+            health: 60
+            defense: 10
+            speed: 4
+            attack: 8
+
+    c: #chest
+        name: Chest
+        group: Chests
+        visible: True
+
+    s: #enemy spawner
+        name: Goblin Spawner
+        group: Goblin Spawners
+        visible: False
+
+    k: # goblin
+        name: Goblin
+        group: Goblins
+        visible: True
+        color: red
+        start:
+            - action: attack
+              target: Player
+        attributes:
+            health: 10
+            defense: 2
+            speed: 1
+            attack: 2
+
+    S: # Boss spawner
+        name: Boss Spawner
+        group: Boss Spawners
+        visible: False
+
+    N: #Miniboss spawner
+        name: MiniBoss Spawner
+        group: MiniBoss Spawners
+        visible: False
+
+triggers:
+    1: #chest 1
+        - action: give
+          actor: chest
+          item: Iron Sword
+          type: weapon
+          attributes:
+               damage: 9
+
+    2: #chest 2
+        - action: give
+          actor: chest
+          item: Bronze Sword
+          type: weapon
+          attributes:
+               damage: 7
+
+    3: #chest 3
+        - action: give
+          actor: chest
+          item: Something Strange
+          type: weapon
+          attributes:
+               damage: 10
+
+    4: #chest 4
+        - action: give
+          actor: chest
+          item: An orange
+          type: weapon
+          attributes:
+               damage: 13
+        - action: script
+          script:
+            - An orange!
+            - The most powerful weapon in the free world!
+            - The gods must smile upon you, O strange one!
+
+    a: #enemy trigger
+        - action: spawn
+          actor: group(Goblin Spawners)
+          target: k 
+
+    b: #enemy trigger
+        - action: spawn
+          actor: group(Goblin Spawners)
+          target: k 
+
+    d: #enemy trigger
+        - action: spawn
+          actor: group(Goblin Spawners)
+          target: k 
+
+    e: #enemy trigger
+        - action: spawn
+          actor: group(Goblin Spawners)
+          target: k 
+    
+    f: #enemy trigger
+        - action: spawn
+          actor: group(Goblin Spawners)
+          target: k 
+
+    g: #enemy trigger
+        - action: spawn
+          actor: group(Goblin Spawners)
+          target: k 
+
+    h: # boss trigger
+        - action: spawn
+          actor: group(Boss Spawners)
+          target: M 
+
+    i: # miniboss trigger
+        - action: spawn
+          actor: group(MiniBoss Spawners)
+          target: B
+
+    n: # next level
+        - action: script
+          script:
+            - Ben hasn't implemented keys and stuff yet, so this is a reminder.
+            - Or maybe it's just a joke so we don't have to write more than one map.
+            - Who can know for sure?
+    
