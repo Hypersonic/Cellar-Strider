@@ -2,32 +2,32 @@
 
 map: |
     1                           -----+-------------------------------------------------------------------+----+
-                                   /             s          hhhhh|        \             /    /     /     |     \
+                                   /             x          hhhhh|        \             /    /     /     |     \
                                   +                         \    |   \     \           /33| /  \  /  \   |  /   \
                                   \    S                     +   |    \     \         / c \     \     \    /     \
-                               +---+                    s    |   |     \ s   \       /----/   +-----------+  s    \
+                               +---+                    x    |   |     \ w   \       /----/   +-----------+  w    \
            +-------+           |  N=                         |ggg|      \     +-----+                      \       +
-          /         \          +---+                         +   |  s    \                                  \     /
-         +          a\            /       s                   \           \                                  |fff/
+          /         \          +---+                         +   |  w    \                                  \     /
+         +          a\            /       x                   \           \                                  |fff/
          |         aa +-------------------------------------------------------------------------------+      |  +
-         |    +---+a       d   s                 s                   s                 s               \    s|   \
-         /   /    |         d          s                    s                         s                 \    |    \
-        /   /     |      +-------+---------------+---------------------------------------------------+   \   +     +
-    +--+jjj/      |             /                 \             |                 \      s            \   \        |
+         |    +---+a       d   u                 u                   u                 u               \    u|   \
+         /   /    |         d          u                    u                         u                 \    |    \
+        /   /     |      +-------+---------------+---------------------------------------------------+   \   |     +
+    +--+jjj/      |             /                 \             |                 \      v            \   \  +     |
     |     /       |            /  /+---------+     \   +-----+  /  +----+-------+  \                   \   \       |
     | @  /        |     s     /  //           \     \       /  /   |   / \    |  \  +             T     +   +      |
     +---+         +          /  //  /\         \     \     /          /    /      |ii                   |   |      |
-                   \        /      /  \      s  \     \   +--------------------+ee+   +                 |  s|      +
-                    \      +------+              \     \   s                  /    \ / \  s           s |   |     /
+                   \        /      /  \      s  \     \   +--------------------+ee+   +                 |  u|      +
+                    \      +------+              \     \   t                  /    \ / \  v           v |   |     /
                      \      \        +------------+     |     +---------+    /      +   +---------------+   |    /
                       \      \                   /     /      |        /    /          /               /    +   /
                        \      \     +----+      /     /          /    /    /------+   /    +------    /        /
-                        \      \   /  1c |     /   s /     +----+    /    /   s  /   /    / c2       /    +---+
+                        \      \   /  1c |     /   s /     +----+    /    /   t  /   /    / c2       /    +---+
                          \      \ /    1 |    /     /     /         /    /    / /   /    /222       /    / 4c /
                           \      +       |   /     /     /   s     /    /    /     /    /          /    /   4/
-                           \      \     /   /     +-----+         /    /    +-----+    /          /       s /
-                            \   s  \   /   /                     / s  /               /          /---------+
-                             \      \ / s /       +-------------+    +---------------+     s    /
+                           \      \     /   /     +-----+         /    /    +-----+    /          /       u /
+                            \   s  \   /   /                     / t  /               /          /---------+
+                             \      \ / s /       +-------------+    +---------------+     t    /
                               \          /            b                                        /
                                +--------------------------------------------------------------+
 
@@ -71,7 +71,32 @@ objects:
         color: yellow
 
     s: #enemy spawner
-        name: Goblin Spawner
+        name: Goblin Spawner S
+        group: Goblin Spawners
+        visible: False
+
+    t: #enemy spawner
+        name: Goblin Spawner T
+        group: Goblin Spawners
+        visible: False
+    
+    u: #enemy spawner
+        name: Goblin Spawner U
+        group: Goblin Spawners
+        visible: False
+    
+    v: #enemy spawner
+        name: Goblin Spawner V
+        group: Goblin Spawners
+        visible: False
+
+    w: #enemy spawner
+        name: Goblin Spawner W
+        group: Goblin Spawners
+        visible: False
+
+    x: #enemy spawner
+        name: Goblin Spawner X
         group: Goblin Spawners
         visible: False
 
@@ -151,32 +176,32 @@ triggers:
 
     a: #enemy trigger
         - action: spawn
-          actor: group(Goblin Spawners)
+          actor: Goblin Spawner S
           target: k 
 
     b: #enemy trigger
         - action: spawn
-          actor: group(Goblin Spawners)
+          actor: Goblin Spawner T
           target: k 
 
     d: #enemy trigger
         - action: spawn
-          actor: group(Goblin Spawners)
+          actor: Goblin Spawner U
           target: k 
 
     e: #enemy trigger
         - action: spawn
-          actor: group(Goblin Spawners)
+          actor: Goblin Spawner V
           target: k 
     
     f: #enemy trigger
         - action: spawn
-          actor: group(Goblin Spawners)
+          actor: Goblin Spawner W
           target: k 
 
     g: #enemy trigger
         - action: spawn
-          actor: group(Goblin Spawners)
+          actor: Goblin Spawner X
           target: k 
 
     h: # boss trigger
