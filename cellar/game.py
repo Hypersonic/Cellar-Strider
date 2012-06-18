@@ -101,17 +101,26 @@ class Game(object):
         lines = [
             (0, 0, "Your inventory:", self.display.BOLD),
             (2, 4, "-", None),
-            (2, 6, "Nothing", self.display.REVERSE if not self.player.current_item else None)
         ]
+        if self.player.current_item:
+            lines.append((2, 6, "Nothing", None))
+        else:
+            lines.append((2, 6, "Nothing" + " " * 65, self.display.REVERSE))
 
         row = 3
         for item in self.player.inventory:
             lines.append((row, 4, "-", None))
             if item is self.player.current_item:
-                lines.append((row, 6, item.name, self.display.REVERSE))
+                effect = self.display.REVERSE
+                lines.append((row, 6, " " * 72, effect))
             else:
-                lines.append((row, 6, item.name, None))
+                effect = None
+            lines.append((row, 6, item.name, effect))
+            lines.append((row, 36, item.type.capitalize(), effect))
+            lines.append((row, 50, item.description, effect))
             row += 1
+
+        lines.append((row + 1, 0, "Press <enter> to resume...", None))
         return lines
 
     @property

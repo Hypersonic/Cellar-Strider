@@ -41,4 +41,3 @@ Maps
 
 A sample of the map format can be viewed in `games/tutorial/tutorial.yaml`. A
 (much) more complex example is `games/main-game/level02.yaml`.
-

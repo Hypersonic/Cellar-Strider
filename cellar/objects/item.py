@@ -64,6 +64,15 @@ class Item(Object):
     def attributes(self):
         return self._attributes
 
+    @property
+    def description(self):
+        if self.type == "weapon":
+            return "Strength: {0}".format(self.attributes["damage"])
+        elif self.type == "key":
+            return ""
+        elif self.type == "potion":
+            return "Restores health"
+
     def use(self):
         if self.type == "weapon":
             self._use_weapon()
