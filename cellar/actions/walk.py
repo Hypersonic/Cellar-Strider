@@ -27,6 +27,29 @@ class WalkAction(Action):
                 nodes.append(node)
         return nodes
 
+    def _debug(self, fitness, job, neighbor):
+        from collections import defaultdict
+        map = defaultdict(lambda: defaultdict(list))
+        for point in fitness:
+            fit = [fitness[point], None]
+            if fit[0] == maxint:
+                fit = ["-1", self.game.display.YELLOW]
+            if point == job:
+                fit[1] = self.game.display.RED | self.game.display.BOLD
+            if point == neighbor:
+                fit[1] = self.game.display.GREEN | self.game.display.BOLD
+            map[point[1]][point[0]] = fit
+
+        self.game.display.window.erase()
+        self.game.display._render_header()
+        for row, cells in map.iteritems():
+            for col, (char, flags) in cells.iteritems():
+                if flags:
+                    self.game.display.window.addstr(row + 2, col * 3, str(char).rjust(3), flags)
+                else:
+                    self.game.display.window.addstr(row + 2, col * 3, str(char).rjust(3))
+        self.game.display.window.refresh()
+
     def _get_path(self, map, start, goal):
         fitness = {}  # (x, y) -> fitness
 
@@ -41,8 +64,8 @@ class WalkAction(Action):
             for job in jobs:
                 neighbors = self._get_neighbor_nodes(map, job)
                 for neighbor in neighbors:
-                    #self.game.display.debug((job, neighbor, fitness[job], fitness[neighbor]))
-                    if fitness[neighbor] > fitness[job]:
+                    self._debug(fitness, job, neighbor)
+                    if fitness[neighbor] == maxint:
                         # Increment their fitness from the current tile's:
                         fitness[neighbor] = fitness[job] + 1
                         jobs.append(neighbor)
