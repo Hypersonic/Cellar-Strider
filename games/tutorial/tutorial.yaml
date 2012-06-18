@@ -26,10 +26,6 @@ objects:
        group: NPCs
        visible: True
        color: green
-       attributes:
-            health: -1  # Infinite health
-            defense: -1  # Unhurtable
-            speed: 1
     S:
         name: Spawner
         group: Spawners
@@ -46,11 +42,10 @@ objects:
         start:
             - action: attack
               target: Player
+              speed: 10
+              damage: 5
         attributes:
             health: 10
-            defense: 1
-            speed: 0
-            attack: 0
 
 triggers:
     W:

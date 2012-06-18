@@ -24,6 +24,10 @@ class Player(Object):
     def current_item(self):
         return self._current_item
 
+    @health.setter
+    def health(self, value):
+        self._health = value
+
     @current_item.setter
     def current_item(self, value):
         self._current_item = value
@@ -49,3 +53,6 @@ class Player(Object):
         if self.health <= 0:
             self.game.schedule(2, self.game.end)
             self.die()
+
+    def hit(self, damage):
+        self.health -= damage

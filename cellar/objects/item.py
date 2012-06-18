@@ -13,6 +13,7 @@ class Item(Object):
 
     def _use_weapon(self):
         pass
+        #surrounding = XXX
 
     def _use_key(self):
         pass

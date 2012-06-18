@@ -1,5 +1,7 @@
 # -*- coding: utf-8  -*-
 
+from copy import deepcopy
+
 from cellar.actions import get_action
 from cellar.objects import Object
 
@@ -13,11 +15,8 @@ class Actor(Object):
         self._name = name
         self._group = group
         self._color = color
-        self._attributes = attributes
-        
-        for action in start:
-            action["actor"] = self
-        self.game.do_actions(start)
+        self._action_queue = deepcopy(start)
+        self._attributes = deepcopy(attributes)
 
     def die(self):
         self.game.level.map[self.y][self.x].remove(self)
@@ -26,3 +25,18 @@ class Actor(Object):
 
     def render(self):
         return self._char, self._color
+
+    def hit(self, damage):
+        if "health" in self._attributes:
+            self._attributes["health"] -= damage
+            if self._attributes["health"] <= 0:
+                self.die()
+            return True
+        return False
+
+    def step(self, events):
+        if self._action_queue:
+            for action in self._action_queue:
+                action["actor"] = self
+            self.game.do_actions(self._action_queue)
+            self._action_queue = []

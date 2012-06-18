@@ -1,7 +1,6 @@
 # -*- coding: utf-8  -*-
 
 from os import path
-from time import time
 
 try:
     import yaml
@@ -55,7 +54,6 @@ class Game(object):
             self.end()
 
     def _step_schedule(self):
-        now = time()
         for i, (when, action, args, kwargs) in enumerate(self._schedule):
             if self._clock >= when:
                 self._schedule.pop(i)

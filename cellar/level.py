@@ -31,6 +31,10 @@ class Level(object):
     def __repr__(self):
         return "Level({0!r})".format(self.levelfile)
 
+    def _insert_object(self, obj, name, group):
+        self._objects[name].append(obj)
+        self._object_groups[group].append(obj)
+
     def _parse_map(self, mapstr):
         mapdata = []
         rows = mapstr.splitlines()
@@ -49,6 +53,7 @@ class Level(object):
         if char == "@":
             player = self.game.player
             player.x, player.y = col, row
+            self._insert_object(player, "PLAYER", "PLAYER")
             return player
         elif char in ["+", "-", "|", "\\", "/"]:
             return Wall(self.game, col, row, char)
@@ -94,6 +99,8 @@ class Level(object):
         return self._triggers
 
     def get_actors(self, ident):
+        if isinstance(ident, Actor):
+            return [ident]
         actor = ident.upper()
         if actor.startswith("GROUP(") and actor.endswith(")"):
             group = actor[6:-1]
@@ -109,10 +116,10 @@ class Level(object):
         color = self.game.display.convert_color(info.get("color", "white"))
         start = info.get("start", [])
         attributes = info.get("attributes", {})
+
         obj = Actor(self.game, col, row, char, name, group, visible, color,
                     start, attributes)
-        self._objects[name].append(obj)
-        self._object_groups[group].append(obj)
+        self._insert_object(obj, name, group)
         return obj
 
     def step(self, events):
