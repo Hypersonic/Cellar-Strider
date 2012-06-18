@@ -1,20 +1,68 @@
 # level 1 of main game
 
-map: |
-    +-----------------------------------+
-    |    H                  A           |
-    |   @H                  Ap          |
-    |   H                   A           |
-    +------------------------+       +--+
-    |                                   |
-    |                                   |
-    +-------+-----+     +--+     +------+
-    |        \         a|  |a           |
-    |         \        a|  |a           |
-    +----------+----+   +--+   +--------+
-    |                          |
-    |                          |
-    |      +-------------------+
+map: | 
+    +-------------------------------------+
+    |+-----------------------------------+|
+    ||    H                  A           ||
+    ||   @H                  Ap          ||
+    ||   H                   A           ||
+    |+------------------------+       +--+|
+    ||                                   ||
+    ||                                   ||
+    |+-------+-----+     +--+     +------+|
+    ||        \         a|  |a           ||
+    ||         \        a|  |a           ||
+    |+----------+----+   +--+   +--------+|
+    ||                          |+-------+|
+    ||                          ||     vc||
+    ||      +-------------------+|     vv||
+    ||      |                    |       ||
+    ||      |    +---------------+      //
+    ||      |    |                      ||
+    ||      |    |        +-------------+|
+    ||      +----+---   --+--------------+
+    ||                    |
+    ||                    |
+    |+-------------+      +--
+    +--------------|     L| N /
+                   |     L| N/
+                   |      +-+
+                   |      |
+                   |      |
+                   /      \
+                  /        \
+        /--------+          +-------------------------------------------------------------------------------------\\
+       /                    |\------------------------------------------------------------------------------------\\\
+      /     +---------------+\\-----------------------------------------------------------------------------------\\\\
+     /      |         /      \\\\/////////////////////////////////////////////////////////////////////////////////\\\\\\\\\-+
+     |      /     +  /   /    \\\\/////////                                                                           \\\\\\|
+     |     /     /  /   /      \\\\//////      S                                                                     \\\\\\\|
+     |    /     /  /   /        \\\\//////                                                                             \\\\\|
+     |bbb+     /  /   / e        \\\\////                                                                           \\\\\\\\|
+     |   |    /  +   +         |  \\\\/////                                                                        \\\\\\\\\|
+     |   +   /   |   |         |   \\\/////                                                                           //////|
+     |      /    |   |         |    \\//////                                                                         /////\/|
+     |     /     |   |         |    e\\\////////////////////////////////////\/\\\\\\\\/\/////\\                    /////\///|
+     |    /      |   |         |      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\/\\\\/\\\\                  //////////|
+     |   +       |   |   e     |       \\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\               /\/////////|
+     |   |       +   |         |      hc\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\ zzzzzzzz /////////////|
+     |   |           |         +-----------\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\      //////\//////\/|
+     |   +-----------+---------------------+------------------------------------------------------------     +--------------|
+     |   |            \\\\\\\\\\/\\\\\\\\\      s                                                            ///////////////|
+     |   |  +---+      \\\/\\\\\\\/\\\\\\\\    scs                                                  e       ///\////////////|
+     |   |       \      \\\\\\\/\\\\\\\\\\\\    s                   e                                      //////////\//////|
+     |   +\       \      \\\\\\\\\\\\\/\\\\\\                                                             //\///////////////|
+     |    \\       \      \\\\\/\\\\\\\\\\\\|                                                            ///////////////////|
+     |     \\       \      \\\\\\\\\\\\/\\\\|                                                           /////////\//////////|
+     |      \\       +      +----------------------------------------------------------------          ///////////////\//// |
+     |       \\      |                                     d                                          ///////\///////////   |
+     |        \\     |      +------------------------------+                                         //////\///////////// //|
+     |         \\    |      |\\\\\\/\\\\\\\\\\/\\\\\\\\\\\/\\                                       /////////////\////// c /|
+     |          \\   |      |\\/\\\\\\\\\/\\\\\\\\\\/\\\\\\\\\                                     //////////////////// gg//|
+     |           +   |  e   |\\\\\\/\\\\\\\\\\\\\\/\\\\\\/\\\\+-----------------------------------+-----------------////   /|
+     |               |      +--------------------------------------------------------------------------------------///    //+
+     |     e         |                                                                                                   e//|
+     +---------------+------------------------------------------------------------------------------------------------------+
 
 objects:
     p:
@@ -25,7 +73,44 @@ objects:
         name: Villager
         group: Villagers
         visible: True
-
+    c:
+        name: Chest
+        group: Chests
+        visible: True
+    S:
+        name: Boss Spawner
+        group: Boss Spawners
+        visible: False
+    B:
+        name: Boss
+        group: Bosses
+        visible: True
+        color: red
+        start:
+            - action: attack
+              target: Player
+        attributes:
+            health: 30
+            defense: 5
+            speed: 2
+            attack: 6
+    e:
+        name: Spawner
+        group: Weak Goblin Spawners
+        visible: False
+    E:
+        name: Weak Goblin
+        group: Goblins
+        visible: True
+        color: red
+        start:
+            - action: attack
+              target: Player
+        attributes:
+            health: 10
+            defense: 2
+            speed: 1
+            attack: 2
 
 
 triggers:
@@ -43,11 +128,73 @@ triggers:
             - You: Well, better check out that present before heading out.
     A:
         - action: give
+          actor: The mysterious present
           item: Wooden Sword
-          target: You
+          type: weapon
+          attributes:
+              damage: 5
         - action: remove
           target: Mysterious Present
         - action: script
           script:
             - You: Woah, a wooden sword!
             - You: Just what I've always wanted!
+    v:
+        - action: give
+          actor: chest
+          item: Health Potion
+          type: potion
+          attributes:
+               health: 4
+    h:
+        - action: give
+          actor: chest
+          item: Stale Minor Health Potion
+          type: potion
+          attributes:
+               health: 1
+    g:
+        - action: give
+          actor: chest
+          item: Bone
+          type: weapon
+          attributes:
+               damage: 1
+        - action: script
+          script:
+            - You: Well, that's disgusting.
+            - You: I need to remember to be careful out here.
+    s:
+        - action: give
+          actor: chest
+          item: Reinforced wooden sword
+          type: weapon
+          attributes:
+               damage: 6
+    b: # Spawn weak goblins
+        - action: spawn
+          actor: group(Weak Goblin spawners)
+          target: E
+    d: # Spawn weak goblins
+        - action: spawn
+          actor: group(Weak Goblin spawners)
+          target: E
+    z: # Spawn boss
+        - action: script
+          script:
+            - Boss: WHO DARES DISTURB MY SLUMBER!?!
+            - You: Me, the valiant hero who just needs the keys to get out of his house!
+            - Boss: That's the most deplorable act I can imagine!
+            - Boss: You must DIE!!
+        - action: spawn
+          actor: group(Boss spawners)
+          target: B
+    N: # Next level load trigger
+        - action: load level
+          level: level02
+    L: # Door key stuff
+        - action: script
+          script:
+            - Ben hasn't implemented keys and stuff yet, so this is a reminder.
+            - Or maybe it's just a joke so we don't have to write more than one map.
+            - Who can know for sure?
