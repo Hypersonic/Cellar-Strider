@@ -1,7 +1,7 @@
-Cellar Strider (working title)
-==============================
+Cellar Strider
+==============
 
-A game where you stride around a cellar or something.
+A game where you stride around a cellar!
 
 Maps
 ====

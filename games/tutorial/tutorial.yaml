@@ -42,7 +42,7 @@ objects:
         start:
             - action: attack
               target: Player
-              speed: 10
+              speed: 5
               damage: 5
         attributes:
             health: 10

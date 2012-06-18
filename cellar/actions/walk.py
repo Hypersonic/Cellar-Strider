@@ -1,6 +1,6 @@
 # -*- coding: utf-8  -*-
 
-from random import random
+from random import choice
 from sys import maxint
 
 from cellar.actions import Action
@@ -8,6 +8,20 @@ from cellar.actions import Action
 __all__ = ["WalkAction"]
 
 class WalkAction(Action):
+    def _convert_map(self, map, actors, dest):
+        """Convert a level map to 1s and 0s for the pathfinding code.
+
+        1 represents a square that you cannot go on, whereas 0 is a square that
+        you can.
+        """
+        newmap = [[1 if any([obj.is_visible for obj in cell]) else 0 \
+                  for cell in row] for row in map]
+
+        for actor in actors:
+            newmap[actor.y][actor.x] = 0
+        newmap[dest.y][dest.x] = 0
+        return newmap
+
     def _get_neighbor_nodes(self, map, point):
         """Return the neighboring nodes of the input node (point)."""
         tests = [
@@ -29,66 +43,72 @@ class WalkAction(Action):
         return nodes
 
     def _calculate_fitness(self, fitness, map, start, goal):
-        jobs = [start]
+        jobs = [goal]
         while jobs:
-            for job in jobs:
-                neighbors = self._get_neighbor_nodes(map, job)
-                for neighbor in neighbors:
-                    if fitness[neighbor] == maxint:
-                        # Increment their fitness from the current tile's:
-                        fitness[neighbor] = fitness[job] + 1
-                        jobs.append(neighbor)
-                    if neighbor == goal:
-                        return fitness
+            job = jobs[0]
+            neighbors = self._get_neighbor_nodes(map, job)
+            for neighbor in neighbors:
+                if fitness[neighbor] == maxint:
+                    # Increment their fitness from the current tile's:
+                    fitness[neighbor] = fitness[job] + 1
+                    jobs.append(neighbor)
+                if neighbor == start:
+                    jobs = [job]  # Auto-complete all jobs (except this one)
+                    break
+            jobs.remove(job)
+        return fitness
 
     def _calculate_path_by_fitness(self, fitness, map, start, goal):
         # At this point all the fitnesses are set, or at least they should be,
         # so it's time to make the path:
-        path = [goal]
-        this = goal
+        path = []
+        this = start
         while 1:
+            ourfit = fitness[this]
             neighbors = self._get_neighbor_nodes(map, this)
-            for neighbor in neighbors:
-                if fitness[neighbor] == fitness[this]:
-                    # To vary the route a bit, randomly pick another path if it
-                    # has the same fitness as the current one
-                    if round(random()):
-                        this = neighbor
-                elif fitness[neighbor] < fitness[this]:
-                    this = neighbor
-            if this == start:
-                return path
+            closer = [nbor for nbor in neighbors if fitness[nbor] < ourfit]
+            if not closer:
+                raise StopIteration()  # Cannot complete path; obstructed
+            this = choice(closer)
             path.append(this)
+            if this == goal:
+                return path
 
-    def _get_path(self, map, start, goal):
+    def _get_path_smartly(self, map, start, goal):
         fitness = {}  # (x, y) -> fitness
         # Set all the fitnesses to a stupidly high value:
         for y, row in enumerate(map):
             for x in range(len(row)):
                 fitness[(x, y)] = maxint
 
-        fitness[start] = 0
+        fitness[goal] = 0
         self._calculate_fitness(fitness, map, start, goal)
         path = self._calculate_path_by_fitness(fitness, map, start, goal)
-
-        # Since we went from end to start, the path is backwards, so we have to
-        # reverse it:
-        path.reverse()
         return path
 
-    def _convert_map(self, map, actors, dest):
-        """Convert a level map to 1s and 0s for the pathfinding code.
+    def _get_path_dumbly(self, start, goal):
+        path = []
+        this = start
+        while 1:
+            if this[0] < goal[0]:
+                this = (this[0] + 1, this[1])
+            elif this[0] > goal[0]:
+                this = (this[0] - 1, this[1])
+            elif this[1] < goal[1]:
+                this = (this[0], this[1] + 1)
+            elif this[1] > goal[1]:
+                this = (this[0], this[1] - 1)
+            path.append(this)
+            if this == goal:
+                return path
 
-        1 represents a square that you cannot go on, whereas 0 is a square that
-        you can.
-        """
-        newmap = [[1 if any([obj.is_visible for obj in cell]) else 0 \
-                  for cell in row] for row in map]
-
-        for actor in actors:
-            newmap[actor.y][actor.x] = 0
-        newmap[dest.y][dest.x] = 0
-        return newmap
+    def _get_path(self, map, start, goal):
+        try:
+            return self._get_path_smartly(map, start, goal)
+        except StopIteration:
+            # Path could not be completed. Fall back on simply moving in the
+            # direction of the goal:
+            return self._get_path_dumbly(start, goal)
 
     def execute(self):
         actors = self.game.level.get_actors(self.data["actor"])

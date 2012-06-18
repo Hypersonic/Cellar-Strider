@@ -19,11 +19,6 @@ map: |
     |                T                 |
     +----------------------------------+
 
-# Rooms represent groups of rectangles, associated with a name
-rooms:
-    bossroom:
-        - [19, 0, 36, 17]  # [x1, y1, x2, y2]
-
 # Associations:
 # Because actors are represented on the map by a single character, you
 # can define more information about them here.
