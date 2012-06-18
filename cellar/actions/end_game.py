@@ -5,4 +5,5 @@ from cellar.actions import Action
 __all__ = ["EndGameAction"]
 
 class EndGameAction(Action):
-    pass
+    def execute(self):
+        self.game.end()

@@ -4,15 +4,15 @@ map: |
     +----------------------+--------------------------+
     |       W              |                          |
     |   @   W       M      |                          |
-    |      WW              |                          |
+    |      WW              |            F             |
     |WWWWWWW               |                          |
-    |                      |                          |
-    +---------+TTTTT+------+                          |
-    |                      |                          |
-    |   S           F      |                          |
+    |                      |        GGGGGGGGGGGGGGGGGG|
+    +---------+TTTTT+------+      GGG                 |
+    |                      |GGGGGGG                   |
+    |   S                  |                          |
     |                   S  +                          |
-    |           S          G                          |
-    |                      G                          |
+    |           S                                     |
+    |                                                 |
     +-------------------------------------------------+
 
 # @ is player, M is "old man" tutor-guy
@@ -71,6 +71,7 @@ triggers:
         - action: walk
           actor: Old Man
           target: Old Man Waypoint
+          speed: 4
     T:
         - action: script
           script:

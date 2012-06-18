@@ -8,7 +8,7 @@ class Action(object):
         self.data = data
 
     def get_duration(self):
-        return 0
+        return 1.0 / self.game.display.max_fps
 
     def execute(self):
         pass

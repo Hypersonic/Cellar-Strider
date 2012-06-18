@@ -21,6 +21,7 @@ class Game(object):
         self._gamedir = gamedir
 
         self._playing = False
+        self._clock = 0
         self._name = None
         self._entry_level = None
         self._level = None
@@ -56,7 +57,7 @@ class Game(object):
     def _step_schedule(self):
         now = time()
         for i, (when, action, args, kwargs) in enumerate(self._schedule):
-            if now >= when:
+            if self._clock >= when:
                 self._schedule.pop(i)
                 action(*args, **kwargs)
 
@@ -67,6 +68,7 @@ class Game(object):
         self.level.step(events)
         self.display.render(self.level.map, (self.player.y, self.player.x))
         self.display.tick()
+        self._clock += 1
 
     def _update_inventory(self, player, events):
         if ord("w") in events and player.inventory:
@@ -146,7 +148,8 @@ class Game(object):
             args = ()
         if not kwargs:
             kwargs = {}
-        self._schedule.append((time() + when, action, args, kwargs))
+        end = self._clock + self.display.max_fps * when
+        self._schedule.append((end, action, args, kwargs))
 
     def do_actions(self, actions):
         offset = 0

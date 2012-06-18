@@ -14,6 +14,9 @@ class Actor(Object):
         self._group = group
         self._color = color
         self._attributes = attributes
+        
+        for action in start:
+            action["actor"] = self
         self.game.do_actions(start)
 
     def die(self):

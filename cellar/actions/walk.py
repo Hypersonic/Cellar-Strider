@@ -27,13 +27,13 @@ class WalkAction(Action):
                 nodes.append(node)
         return nodes
 
-    def _debug(self, fitness, job, neighbor):
+    def _debug(self, fitness, job, neighbor, jobs):
         from collections import defaultdict
         map = defaultdict(lambda: defaultdict(list))
         for point in fitness:
             fit = [fitness[point], None]
             if fit[0] == maxint:
-                fit = ["-1", self.game.display.YELLOW]
+                fit = [-1, self.game.display.YELLOW]
             if point == job:
                 fit[1] = self.game.display.RED | self.game.display.BOLD
             if point == neighbor:
@@ -42,12 +42,13 @@ class WalkAction(Action):
 
         self.game.display.window.erase()
         self.game.display._render_header()
+        self.game.display.window.addstr(2, 0, "Job queue length: {0}".format(len(jobs)))
         for row, cells in map.iteritems():
             for col, (char, flags) in cells.iteritems():
                 if flags:
-                    self.game.display.window.addstr(row + 2, col * 3, str(char).rjust(3), flags)
+                    self.game.display.window.addstr(row + 4, col * 3, str(char).rjust(3), flags)
                 else:
-                    self.game.display.window.addstr(row + 2, col * 3, str(char).rjust(3))
+                    self.game.display.window.addstr(row + 4, col * 3, str(char).rjust(3))
         self.game.display.window.refresh()
 
     def _get_path(self, map, start, goal):
@@ -60,31 +61,33 @@ class WalkAction(Action):
 
         fitness[start] = 0
         jobs = [start]
-        while jobs:
-            for job in jobs:
-                neighbors = self._get_neighbor_nodes(map, job)
-                for neighbor in neighbors:
-                    self._debug(fitness, job, neighbor)
-                    if fitness[neighbor] == maxint:
-                        # Increment their fitness from the current tile's:
-                        fitness[neighbor] = fitness[job] + 1
-                        jobs.append(neighbor)
+        try:
+            while jobs:
+                for job in jobs:
+                    neighbors = self._get_neighbor_nodes(map, job)
+                    for neighbor in neighbors:
+                        #self._debug(fitness, job, neighbor, jobs)
+                        if fitness[neighbor] == maxint:
+                            # Increment their fitness from the current tile's:
+                            fitness[neighbor] = fitness[job] + 1
+                            jobs.append(neighbor)
+                        if neighbor == goal:
+                            raise StopIteration
+        except StopIteration:
+            pass
 
         # At this point all the fitnesses are set, or at least they should be,
         # so it's time to make the path:
-        path = []  # Empty path, will eventually be (x,y)s from the start to
-                   # the goal
-
-        current = goal
-        while current != start:
-            path.append(current)
-            neighbors = self._get_neighbor_nodes(map, current)
-            # Find the neighbor with the lowest fitness value:
-            next = neighbors[0]
+        path = [goal]
+        this = goal
+        while 1:
+            neighbors = self._get_neighbor_nodes(map, this)
             for neighbor in neighbors:
-                if fitness[next] > fitness[neighbor]:
-                    next = neighbor
-            current = next
+                if fitness[neighbor] < fitness[this]:
+                    this = neighbor
+            if this == start:
+                break
+            path.append(this)
 
         # Since we went from end to start, the path is obviously backwards. So
         # we have to reverse it:
@@ -108,6 +111,8 @@ class WalkAction(Action):
     def execute(self):
         actors = self.game.level.get_actors(self.data["actor"])
         destination = self.game.level.get_actors(self.data["target"])[0]
+        speed = self.data.get("speed", 1)
+
         map = self._convert_map(self.game.level.map, actors, destination)
         end = (destination.x, destination.y)
         keep_going = False
@@ -121,4 +126,5 @@ class WalkAction(Action):
                 keep_going = True
 
         if keep_going:
-            self.game.schedule(0, self.execute)
+            wait = float(speed) / self.game.display.max_fps
+            self.game.schedule(wait, self.execute)
