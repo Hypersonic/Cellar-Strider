@@ -35,6 +35,9 @@ The game is completely keyboard-based. Use `WASD` to navigate the player.
 
 Press `i` to open your inventory, select an item with `W` and `S`, then close
 the inventory with `Enter`. To use the item, press `Space` while in the game.
+For swords and keys, remember to be right next to the object when using it. For
+swords, a good technique is to move towards the enemy, press `Space`, and then
+immediate move away so they cannot retaliate.
 
 Maps
 ====
