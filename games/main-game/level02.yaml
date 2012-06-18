@@ -1,24 +1,21 @@
 # main-game level 2
 
 map: |
-
-
-
-                                -----+-------------------------------------------------------------------+----+
+    1                           -----+-------------------------------------------------------------------+----+
                                    /             s          hhhhh|        \             /    /     /     |     \
-                                  +                         \    |   \     \           /33| /  \  /  \   |  /   \ 
+                                  +                         \    |   \     \           /33| /  \  /  \   |  /   \
                                   \    S                     +   |    \     \         / c \     \     \    /     \
                                +---+                    s    |   |     \ s   \       /----/   +-----------+  s    \
-           +-------+           |n  |                         |ggg|      \     +-----+                      \       +
+           +-------+           |  N=                         |ggg|      \     +-----+                      \       +
           /         \          +---+                         +   |  s    \                                  \     /
          +          a\            /       s                   \           \                                  |fff/
-         |         a  +-------------------------------------------------------------------------------+      |  +
-         |    +---+        d   s                 s                   s                 s               \    s|   \
+         |         aa +-------------------------------------------------------------------------------+      |  +
+         |    +---+a       d   s                 s                   s                 s               \    s|   \
          /   /    |         d          s                    s                         s                 \    |    \
         /   /     |      +-------+---------------+---------------------------------------------------+   \   +     +
-    +--+   /      |             /                 \             |                 \      s            \   \        |
+    +--+jjj/      |             /                 \             |                 \      s            \   \        |
     |     /       |            /  /+---------+     \   +-----+  /  +----+-------+  \                   \   \       |
-    | @  /        |     s     /  //           \     \       /  /   |   / \    |  \  +             N     +   +      |
+    | @  /        |     s     /  //           \     \       /  /   |   / \    |  \  +             T     +   +      |
     +---+         +          /  //  /\         \     \     /          /    /      |ii                   |   |      |
                    \        /      /  \      s  \     \   +--------------------+ee+   +                 |  s|      +
                     \      +------+              \     \   s                  /    \ / \  s           s |   |     /
@@ -36,18 +33,17 @@ map: |
 
 objects:
     B: #Miniboss
-        name: MiniBoss
-        group: MiniBosses
+        name: Mini-Boss
+        group: Mini-Bosses
         visible: True
         color: red
         start:
             - action: attack
               target: Player
+              speed: 1
+              damage: 20
         attributes:
             health: 30
-            defense: 4
-            speed: 2
-            attack: 6
        
     M: # boss
         name: Boss
@@ -57,16 +53,22 @@ objects:
         start:
             - action: attack
               target: Player
+              speed: 0
+              damage: 40
+        die:
+            - action: give
+              item: Magical Exit Key
+              type: key
+              attributes:
+                  unlock: Exit Door
         attributes:
             health: 60
-            defense: 10
-            speed: 4
-            attack: 8
 
     c: #chest
         name: Chest
         group: Chests
         visible: True
+        color: yellow
 
     s: #enemy spawner
         name: Goblin Spawner
@@ -81,42 +83,54 @@ objects:
         start:
             - action: attack
               target: Player
+              speed: 3
+              damage: 5
         attributes:
-            health: 10
-            defense: 2
-            speed: 1
-            attack: 2
+            health: 15
 
     S: # Boss spawner
         name: Boss Spawner
         group: Boss Spawners
         visible: False
 
-    N: #Miniboss spawner
-        name: MiniBoss Spawner
-        group: MiniBoss Spawners
+    T: #Miniboss spawner
+        name: Mini-Boss Spawner
+        group: Mini-Boss Spawners
         visible: False
 
+    =:
+        name: Exit Door
+        group: Doors
+        visible: True
+        color: magenta
+
+
 triggers:
+    j:
+        - action: script
+          script:
+            - You: Wait, where am I?
+            - You: This isn't my house!
+    
     1: #chest 1
         - action: give
-          actor: chest
+          actor: The chest
           item: Iron Sword
           type: weapon
           attributes:
-               damage: 9
+               damage: 15
 
     2: #chest 2
         - action: give
-          actor: chest
+          actor: The chest
           item: Bronze Sword
           type: weapon
           attributes:
-               damage: 7
+               damage: 12
 
     3: #chest 3
         - action: give
-          actor: chest
+          actor: The chest
           item: Something Strange
           type: weapon
           attributes:
@@ -124,16 +138,16 @@ triggers:
 
     4: #chest 4
         - action: give
-          actor: chest
+          actor: The chest
           item: An orange
           type: weapon
           attributes:
-               damage: 13
+               damage: 20
         - action: script
           script:
-            - An orange!
-            - The most powerful weapon in the free world!
-            - The gods must smile upon you, O strange one!
+            - ???: An orange!
+            - ???: The most powerful weapon in the free world!
+            - ???: The gods must smile upon you, O strange one!
 
     a: #enemy trigger
         - action: spawn
@@ -172,13 +186,9 @@ triggers:
 
     i: # miniboss trigger
         - action: spawn
-          actor: group(MiniBoss Spawners)
+          actor: group(Mini-Boss Spawners)
           target: B
 
-    n: # next level
-        - action: script
-          script:
-            - Ben hasn't implemented keys and stuff yet, so this is a reminder.
-            - Or maybe it's just a joke so we don't have to write more than one map.
-            - Who can know for sure?
-    
+    N: # next level
+        - action: load level
+          level: level03

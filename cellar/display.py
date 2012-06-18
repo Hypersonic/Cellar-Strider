@@ -74,7 +74,7 @@ class Display(object):
         i = 0
         while i < maxwidth:
             col = 0
-            if self.window.getch() == ord(" "):
+            if self.window.getch() == ord("\n"):
                 i = maxwidth
             for msg, flags in message:
                 for char in msg:
@@ -89,10 +89,10 @@ class Display(object):
             time.sleep(1.0 / self._message_scroll_fps)
             i += 1
 
-        successful = self._block_until_char_with_time_limit(" ", limit=3)
+        successful = self._block_until_char_with_time_limit("\n", limit=3)
         if not successful:
-            self.window.addstr(row, col + 2, "<space>...", self.BOLD)
-            self._block_until_char(" ")
+            self.window.addstr(row, col + 2, "<enter>...", self.BOLD)
+            self._block_until_char("\n")
         self.window.deleteln()
 
     def _render_header(self, player=None):
@@ -196,9 +196,9 @@ class Display(object):
             for msg in message:
                 self.window.addstr(row, 0, msg)
                 row += 1
-            self.window.addstr(row + 1, 0, "Press <space> to resume...")
+            self.window.addstr(row + 1, 0, "Press <enter> to resume...")
             self.window.refresh()
-            self._block_until_char(" ")
+            self._block_until_char("\n")
 
     def message(self, messages):
         self._message_buffer += messages

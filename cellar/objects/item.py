@@ -1,5 +1,7 @@
 # -*- coding: utf-8  -*-
 
+from random import choice
+
 from cellar.objects import Object
 
 __all__ = ["Item"]
@@ -11,15 +13,44 @@ class Item(Object):
         self._type = itemtype
         self._attributes = attributes
 
+    def _get_point_carefully(self, x, y):
+        try:
+            cell = self.game.level.map[y][x]
+        except IndexError:
+            return None
+        return [obj for obj in cell if hasattr(obj, "_is_actor")]
+
+    def _get_distance(self, a, b):
+        return ((a.x - b.x) ** 2 + (a.y - b.y) ** 2) ** 0.5
+
     def _use_weapon(self):
         x, y = self.game.player.x, self.game.player.y
-        surrounding = self.game.level.map############################################################
+        neighbors = [
+            self._get_point_carefully(x + 1, y),
+            self._get_point_carefully(x - 1, y),
+            self._get_point_carefully(x, y + 1),
+            self._get_point_carefully(x, y - 1)
+        ]
+        targets = [neighbor for neighbor in neighbors if neighbor]
+        if targets:
+            target = choice(targets)
+            for obj in target:
+                obj.hit(self.attributes["damage"])
 
     def _use_key(self):
-        pass
+        player = self.game.player
+        targets = self.game.level.get_actors(self.attributes["unlock"])
+        dists = [self._get_distance(player, target) for target in targets]
+        if min(dists) <= 2:
+            while targets:
+                targets[0].die()
+            self.game.player.inventory.remove(self)
+            self.game.player.current_item = None
 
     def _use_potion(self):
-        pass
+        self.game.player.health += self.attributes["health"]
+        self.game.player.inventory.remove(self)
+        self.game.player.current_item = None
 
     @property
     def name(self):
@@ -40,5 +71,3 @@ class Item(Object):
             self._use_key()
         elif self.type == "potion":
             self._use_potion()
-        else:
-            raise NotImplementedError(self.type)

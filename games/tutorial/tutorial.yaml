@@ -35,8 +35,8 @@ objects:
         group: Waypoints
         visible: False
     D:
-        name: Training enemy
-        group: Training enemies
+        name: Training Enemy
+        group: Training Enemies
         visible: True
         color: red
         start:
@@ -56,13 +56,13 @@ triggers:
             - Old Man: Here, take this! It ain't much more than a stick, but it'll do the basics.
         - action: give
           actor: Old Man
-          item: Training sword
+          item: Training Sword
           type: weapon
           attributes:
               damage: 5
         - action: script
           script:
-            - Old Man: Don't just stand there staring at it! Open up the equip menu with "i", and put it on! 
+            - Old Man: Don't just stand there staring at it! Open up the equip menu with <i>, put it on, and use it with <space>!
         - action: walk
           actor: Old Man
           target: Old Man Waypoint

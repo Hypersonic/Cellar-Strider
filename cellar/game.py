@@ -94,7 +94,7 @@ class Game(object):
         if ord("q") in events:
             self.end()
             return None
-        elif ord(" ") in events:
+        elif ord(" ") in events or ord("\n") in events:
             return None
         self._update_inventory(self.player, events)
 
@@ -153,6 +153,9 @@ class Game(object):
             kwargs = {}
         end = self._clock + self.display.max_fps * when
         self._schedule.append((end, action, args, kwargs))
+
+    def clear_schedule(self):
+        self._schedule = []
 
     def do_actions(self, actions):
         offset = 0

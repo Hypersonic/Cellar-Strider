@@ -100,6 +100,8 @@ class Level(object):
 
     def get_actors(self, ident):
         if isinstance(ident, Actor):
+            if not ident.is_alive:
+                return []
             return [ident]
         actor = ident.upper()
         if actor.startswith("GROUP(") and actor.endswith(")"):
@@ -115,10 +117,11 @@ class Level(object):
         visible = info.get("visible", True)
         color = self.game.display.convert_color(info.get("color", "white"))
         start = info.get("start", [])
+        die = info.get("die", [])
         attributes = info.get("attributes", {})
 
         obj = Actor(self.game, col, row, char, name, group, visible, color,
-                    start, attributes)
+                    start, die, attributes)
         self._insert_object(obj, name, group)
         return obj
 

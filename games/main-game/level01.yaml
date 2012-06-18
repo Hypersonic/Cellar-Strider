@@ -4,8 +4,8 @@ map: |
     +-------------------------------------+
     |+-----------------------------------+|
     ||    H                  A           ||
-    ||   @H                  Ap          ||
-    ||   H                   A           ||
+    ||   @H                  AP          ||
+    ||   HH                  A           ||
     |+------------------------+       +--+|
     ||                                   ||
     ||                                   ||
@@ -24,8 +24,8 @@ map: |
     ||                    |
     ||                    |
     |+-------------+      +--
-    +--------------|     L| N /
-                   |     L| N/
+    +--------------|      =N  /
+                   |      =N /
                    |      +-+
                    |      |
                    |      |
@@ -48,9 +48,9 @@ map: |
      |   |       +   |         |      hc\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\ zzzzzzzz /////////////|
      |   |           |         +-----------\\\\\\\\\\/\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\/\\\\\\\\\\\\\\\\\      //////\//////\/|
      |   +-----------+---------------------+------------------------------------------------------------     +--------------|
-     |   |            \\\\\\\\\\/\\\\\\\\\      s                                                            ///////////////|
-     |   |  +---+      \\\/\\\\\\\/\\\\\\\\    scs                                                  e       ///\////////////|
-     |   |       \      \\\\\\\/\\\\\\\\\\\\    s                   e                                      //////////\//////|
+     |   |            \\\\\\\\\\/\\\\\\\\\     sss                                                           ///////////////|
+     |   |  +---+      \\\/\\\\\\\/\\\\\\\\    scs                                                  f       ///\////////////|
+     |   |       \      \\\\\\\/\\\\\\\\\\\\   sss                  f                                      //////////\//////|
      |   +\       \      \\\\\\\\\\\\\/\\\\\\                                                             //\///////////////|
      |    \\       \      \\\\\/\\\\\\\\\\\\|                                                            ///////////////////|
      |     \\       \      \\\\\\\\\\\\/\\\\|                                                           /////////\//////////|
@@ -65,18 +65,21 @@ map: |
      +---------------+------------------------------------------------------------------------------------------------------+
 
 objects:
-    p:
+    P:
         name: Mysterious Present
         group: Presents
         visible: True
+        color: yellow
     a:
         name: Villager
         group: Villagers
         visible: True
+        color: green
     c:
         name: Chest
         group: Chests
         visible: True
+        color: yellow
     S:
         name: Boss Spawner
         group: Boss Spawners
@@ -89,14 +92,32 @@ objects:
         start:
             - action: attack
               target: Player
+              speed: 1
+              damage: 25
+        die:
+            - action: script
+              script:
+                - Boss: You have proved a worthy challenger, hero.
+                - Boss: "*cough* Ugh... *cough*"
+                - Boss: "Here are the *cough* keys to get out of your *cough* house..."
+                - Boss: "You *cough* earned them well..."
+            - action: give
+              item: Magical Exit Key
+              type: key
+              attributes:
+                  unlock: Exit Door
+            - action: script
+              script:
+                - You: Hmm... I wonder where the exit is?
         attributes:
-            health: 30
-            defense: 5
-            speed: 2
-            attack: 6
+            health: 40
     e:
         name: Spawner
         group: Weak Goblin Spawners
+        visible: False
+    f:
+        name: Spawner
+        group: Goblin Spawners
         visible: False
     E:
         name: Weak Goblin
@@ -106,19 +127,34 @@ objects:
         start:
             - action: attack
               target: Player
+              speed: 2
+              damage: 10
         attributes:
             health: 10
-            defense: 2
-            speed: 1
-            attack: 2
-
+    F:
+        name: Goblin
+        group: Goblins
+        visible: True
+        color: red
+        start:
+            - action: attack
+              target: Player
+              speed: 2
+              damage: 10
+        attributes:
+            health: 15
+    =:
+        name: Exit Door
+        group: Doors
+        visible: True
+        color: magenta
 
 triggers:
     H:
         - action: script
           script:
             - Strange Voice: Welcome!
-            - Strange Voice: There have been 2 new monster attack(s) in the past 24 hour(s)
+            - Strange Voice: There have been 2 new monster attack(s) in the past 24 hour(s).
             - Strange Voice: Anyways, you're safe at home, so that means something, right?
             - Strange Voice: It'd be /really/ nice if someone did something about those monsters...
             - Strange Voice: And someone left you a present!
@@ -141,21 +177,21 @@ triggers:
             - You: Just what I've always wanted!
     v:
         - action: give
-          actor: chest
+          actor: The chest
           item: Health Potion
           type: potion
           attributes:
-               health: 4
+               health: 20
     h:
         - action: give
-          actor: chest
+          actor: The chest
           item: Stale Minor Health Potion
           type: potion
           attributes:
-               health: 1
+               health: 5
     g:
         - action: give
-          actor: chest
+          actor: The chest
           item: Bone
           type: weapon
           attributes:
@@ -166,35 +202,31 @@ triggers:
             - You: I need to remember to be careful out here.
     s:
         - action: give
-          actor: chest
-          item: Reinforced wooden sword
+          actor: The chest
+          item: Reinforced Wooden Sword
           type: weapon
           attributes:
-               damage: 6
+               damage: 10
     b: # Spawn weak goblins
         - action: spawn
-          actor: group(Weak Goblin spawners)
+          actor: group(Weak Goblin Spawners)
           target: E
-    d: # Spawn weak goblins
+    d: # Spawn goblins
         - action: spawn
-          actor: group(Weak Goblin spawners)
-          target: E
+          actor: group(Goblin Spawners)
+          target: F
     z: # Spawn boss
         - action: script
           script:
             - Boss: WHO DARES DISTURB MY SLUMBER!?!
+        - action: spawn
+          actor: group(Boss Spawners)
+          target: B
+        - action: script
+          script:
             - You: Me, the valiant hero who just needs the keys to get out of his house!
             - Boss: That's the most deplorable act I can imagine!
             - Boss: You must DIE!!
-        - action: spawn
-          actor: group(Boss spawners)
-          target: B
     N: # Next level load trigger
         - action: load level
           level: level02
-    L: # Door key stuff
-        - action: script
-          script:
-            - Ben hasn't implemented keys and stuff yet, so this is a reminder.
-            - Or maybe it's just a joke so we don't have to write more than one map.
-            - Who can know for sure?

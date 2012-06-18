@@ -8,6 +8,7 @@ class Object(object):
         self._x = x
         self._y = y
         self._visible = visible
+        self._alive = True
 
     @property
     def game(self):
@@ -33,7 +34,14 @@ class Object(object):
     def is_visible(self):
         return self._visible
 
+    @property
+    def is_alive(self):
+        return self._alive
+
     def move(self, dx, dy, noclip=False):
+        if not self._alive:
+            return
+
         destination = self.game.level.map[self.y + dy][self.x + dx]
         if not noclip:
             collisions = [obj.is_visible for obj in destination]
@@ -48,6 +56,7 @@ class Object(object):
 
     def die(self):
         self.game.level.map[self.y][self.x].remove(self)
+        self._alive = False
 
     def render(self):
         pass

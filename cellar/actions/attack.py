@@ -22,13 +22,17 @@ class AttackAction(WalkAction):
         keep_going = False
 
         for actor in actors:
+            if not actor.attributes.get("health", True):
+                # Dead things can't do stuff:
+                continue
             start = actor.x, actor.y
             path = self._get_path(map, start, end)
             if len(path) > 1:
                 actor.move(path[0][0] - actor.x, path[0][1] - actor.y)
             else:
-                self.game.display.beep()
                 target.hit(damage)
+            keep_going = True
 
-        wait = float(speed) / self.game.display.max_fps
-        self.game.schedule(wait, self.execute)
+        if keep_going:
+            wait = float(speed) / self.game.display.max_fps
+            self.game.schedule(wait, self.execute)
