@@ -181,10 +181,10 @@ triggers:
     h:
         - action: give
           actor: The chest
-          item: Stale Minor Health Potion
+          item: Super Health Potion
           type: potion
           attributes:
-               health: 5
+               health: 50
     g:
         - action: give
           actor: The chest
