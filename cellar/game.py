@@ -64,7 +64,7 @@ class Game(object):
         self._handle_global_events(events)
         self._step_schedule()
         self.level.step(events)
-        self.display.render(self.level.map, (self.player.y, self.player.x))
+        self.display.render(self.level.map, self.player)
         self.display.tick()
         self._clock += 1
 
@@ -137,6 +137,11 @@ class Game(object):
     @property
     def player(self):
         return self._player
+
+    @level.setter
+    def level(self, name):
+        levelfile = path.join(self.gamedir, name + ".yaml")
+        self._level = Level(self, levelfile)
 
     def end(self):
         self._playing = False

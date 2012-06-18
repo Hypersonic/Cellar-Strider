@@ -30,6 +30,7 @@ class Actor(Object):
         if "health" in self._attributes:
             self._attributes["health"] -= damage
             if self._attributes["health"] <= 0:
+                self._attributes["health"] = 0
                 self.die()
             return True
         return False

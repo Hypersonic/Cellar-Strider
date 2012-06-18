@@ -12,8 +12,8 @@ class Item(Object):
         self._attributes = attributes
 
     def _use_weapon(self):
-        pass
-        #surrounding = XXX
+        x, y = self.game.player.x, self.game.player.y
+        surrounding = self.game.level.map############################################################
 
     def _use_key(self):
         pass

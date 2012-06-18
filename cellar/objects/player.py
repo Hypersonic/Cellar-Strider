@@ -32,6 +32,11 @@ class Player(Object):
     def current_item(self, value):
         self._current_item = value
 
+    def die(self):
+        self.game.level.map[self.y][self.x].remove(self)
+        self.game.level.objects["PLAYER"].remove(self)
+        self.game.level.object_groups["PLAYER"].remove(self)
+
     def render(self):
         return "@", self.game.display.CYAN | self.game.display.BOLD
 
@@ -50,8 +55,11 @@ class Player(Object):
             elif key == ord(" "):
                 if self._current_item:
                     self._current_item.use()
+
         if self.health <= 0:
+            self.health = 0
             self.game.schedule(2, self.game.end)
+            self.game.display.flash()
             self.die()
 
     def hit(self, damage):

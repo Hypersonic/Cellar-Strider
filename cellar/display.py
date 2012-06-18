@@ -95,22 +95,30 @@ class Display(object):
             self._block_until_char(" ")
         self.window.deleteln()
 
-    def _render_header(self):
+    def _render_header(self, player=None):
         template = "    Cellar Strider v{0} by {1}    "
         header = template.format(__version__, __author__)
         self.window.addstr(0, 0, header, self.REVERSE)
         if self._debug:
             self.window.addstr(0, len(header) + 1, "DEBUG MODE!", self.BOLD)
+        if player:
+            self.window.addstr(2, 0, "Health:", self.BOLD)
+            self.window.addstr(2, len("Health: "), str(player.health))
+            self.window.addstr(3, 0, "Item:", self.BOLD)
+            if player.current_item:
+                self.window.addstr(3, len("Item: "), player.current_item.name)
+            else:
+                self.window.addstr(3, len("Item: "), "Nothing")
 
     def _render_map(self, map, center):
         rows, cols = self.window.getmaxyx()
-        rows -= 4  # Subtract for header and messages
+        rows -= 7  # Subtract for header and messages
         map = self._crop_map(map, center, rows, cols)
         for row, cells in enumerate(map):
             for col, cell in enumerate(cells):
                 for obj in cell:
-                    self._render_object(obj, row + 2, col)
-        return len(map) + 3
+                    self._render_object(obj, row + 5, col)
+        return len(map) + 6
 
     def _render_messages(self, offset):
         if not self._message_buffer:
@@ -166,6 +174,12 @@ class Display(object):
         curses.echo()  # Restore echoing stdin
         curses.endwin()  # Shut down curses
 
+    def beep(self):
+        curses.beep()
+
+    def flash(self):
+        curses.flash()
+
     def convert_color(self, name):
         return self._color_table[name]
 
@@ -203,10 +217,10 @@ class Display(object):
                     self.window.addstr(row + 2, col, line)
             self.tick()
 
-    def render(self, map, center):
+    def render(self, map, player):
         self.window.erase()
-        self._render_header()
-        offset = self._render_map(map, center)
+        self._render_header(player)
+        offset = self._render_map(map, (player.y, player.x))
         self._render_messages(offset)
         self.window.refresh()
 
