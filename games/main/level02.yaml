@@ -178,10 +178,10 @@ triggers:
     "1": #chest 1
         - action: give
           actor: The chest
-          item: Bronze Sword
-          type: weapon
+          item: Super Health Potion
+          type: potion
           attributes:
-               damage: 12
+               health: 50
 
     "2": #chest 2
         - action: give
