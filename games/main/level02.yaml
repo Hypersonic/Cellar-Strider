@@ -1,7 +1,7 @@
 # main-game level 2
 
 map: |
-    1                               +--------------------------------------------------------------------+----+
+                                    +--------------------------------------------------------------------+----+
                                    /             x          hhhhh|        \             /    /     /     |     \
                                   +                         \    |   \     \           /33| /  \  /  \   |  /   \
                                   \    S                     +   |    \     \         / c \     \     \    /     \
@@ -45,7 +45,7 @@ objects:
                 - Boss: I shall destroy you!
             - action: attack
               target: Player
-              speed: 1
+              speed: 2
               damage: 20
         die:
             - action: script
